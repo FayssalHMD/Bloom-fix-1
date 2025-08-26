@@ -1,0 +1,79 @@
+ <div class="loader-wrapper">
+        <img src="/images/flower_loading.png" alt="Loading..." class="loader-flower">
+    </div>
+    
+     <header class="header-section" id="header">
+        <nav class="navigation-bar" aria-label="Main Navigation">
+            <a href="/" class="nav-logo-link">
+                <img src="/images/bloom-logo.png" alt="Bloom Home" class="navigation-logo">
+            </a>
+
+            <ul class="nav-menu desktop-only">
+                <li><a href="/" class="nav-link">Accueil</a></li>
+                <!-- CHANGED HERE -->
+                <li><a href="/#nos-produits" class="nav-link">Produits</a></li>
+                <!-- AND HERE -->
+                <li><a href="/#packs" class="nav-link">Packs</a></li>
+                <li><a href="/resultats" class="nav-link">Nos Résultats</a></li>
+                <li><a href="/contact" class="nav-link">Contact</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                 <button id="theme-toggle-btn" class="nav-icon-btn" aria-label="Toggle theme">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zm-9-8c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1v2c0 .55.45 1 1 1zm0 16c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1v2c0 .55.45 1 1 1zM5.64 6.36c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.64 3.54c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41zm12.72 12.72c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.41-1.41c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41zM5.64 17.64c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.41-1.41c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0l-1.41 1.41zm12.72-12.72c-.39-.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.41-1.41c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0l-1.41 1.41z"></path></svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.37 5.51C9.19 6.15 9.1 6.82 9.1 7.5c0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27C17.45 17.19 14.93 19 12 19c-3.86 0-7-3.14-7-7 0-2.93 1.81-5.45 4.37-6.49z"></path></svg>
+                </button>
+            </div>
+
+            <button class="hamburger-menu" id="hamburger" aria-label="Toggle Navigation Menu" aria-expanded="false">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </nav>
+
+        <div class="mobile-nav" id="mobile-menu">
+            <div class="mobile-nav-top">
+                <ul class="mobile-nav-list">
+                    <li><a href="/" class="mobile-nav-link">Accueil</a></li>
+                    <!-- CHANGED HERE -->
+                    <li><a href="/#nos-produits" class="mobile-nav-link">Produits</a></li>
+                    <!-- AND HERE -->
+                    <li><a href="/#packs" class="mobile-nav-link">Packs</a></li>
+                    <li><a href="/resultats" class="mobile-nav-link">Nos Résultats</a></li>
+                    <li><a href="/contact" class="mobile-nav-link">Contact</a></li>
+                </ul>        
+            </div>
+            <div class="mobile-nav-bottom">
+                <div class="mobile-theme-switcher">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zm-9-8c.55 0 1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1v2c0 .55.45 1 1 1zm0 16c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1v2c0 .55.45 1 1 1zM5.64 6.36c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L5.64 3.54c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41zm12.72 12.72c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41l-1.41-1.41c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l1.41 1.41zM5.64 17.64c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.41-1.41c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0l-1.41 1.41zm12.72-12.72c-.39-.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.41-1.41c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0l-1.41 1.41z"></path></svg>
+                    <input type="checkbox" id="mobile-theme-toggle" class="theme-switch-checkbox">
+                    <label for="mobile-theme-toggle" class="theme-switch-label">
+                        <span class="theme-switch-thumb"></span>
+                    </label>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.37 5.51C9.19 6.15 9.1 6.82 9.1 7.5c0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27C17.45 17.19 14.93 19 12 19c-3.86 0-7-3.14-7-7 0-2.93 1.81-5.45 4.37-6.49z"></path></svg>
+                </div>
+            </div>
+        </div>
+     </header>
+
+
+        <% if (messages && (messages.success || messages.error)) { %>
+            <div class="flash-messages-container">
+            <% if (messages.success) { %>
+                <div class="flash-message flash-success">
+                    <span><%= messages.success %></span>
+                    <button class="flash-close-btn">×</button>
+                </div>
+            <% } %>
+            <% if (messages.error) { %>
+                <div class="flash-message flash-error">
+                    <span><%= messages.error %></span>
+                    <button class="flash-close-btn">×</button>
+                </div>
+            <% } %>
+        </div>
+    <% } %>
+   
+
+     <div class="nav-overlay" id="nav-overlay"></div>

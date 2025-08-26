@@ -1,0 +1,235 @@
+<!-- PASTE THIS ENTIRE CODE BLOCK INTO: views/partials/footer.ejs -->
+
+<footer class="site-footer">
+    <hr class="footer-separator">
+    <div class="footer-content">
+        <a href="/" class="footer-logo">
+            <img src="/images/bloom-logo.png" alt="Bloom Logo" class="footer-logo-img">
+        </a>
+        <div class="footer-links">
+            <a href="/politique-de-confidentialite">Politique de Confidentialité</a>
+            <span>&bull;</span>
+            <a href="/conditions-generales-de-vente">Conditions Générales de Vente</a>
+        </div>
+        <ul class="footer-socials">
+            <li>
+                <a href="https://instagram.com/bloom.oil_" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" /></svg>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.tiktok.com/@bloom.oil" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                    <i class="fa-brands fa-tiktok"></i>
+                </a>
+            </li>
+        </ul>
+        <p class="footer-copyright">© 2025 Bloom. Tous droits réservés.</p>
+    </div>
+</footer>
+
+<!-- ================================================== -->
+<!--         START: RESTORED TOASTS & DRAWERS           -->
+<!-- ================================================== -->
+
+<!-- Standard Toast Notification -->
+<div id="custom-toast-notification" class="custom-toast">
+    <div class="toast-icon">
+        <!-- SVG Icon is injected by script.js -->
+    </div>
+    <p class="toast-message" id="toast-message-text"></p>
+</div>
+
+<!-- Undo Toast Notification -->
+<div id="undo-toast-notification" class="custom-toast undo-toast">
+    <div class="toast-content">
+        <p class="toast-message" id="undo-toast-message"></p>
+        <button id="undo-toast-button" class="undo-button">Annuler</button>
+    </div>
+    <div class="toast-progress-bar" id="undo-toast-progress"></div>
+</div>
+
+<!-- Direct Checkout Drawer -->
+<div id="direct-checkout-drawer" class="checkout-drawer">
+    <div id="drawer-overlay" class="drawer-overlay"></div>
+    <div id="drawer-panel" class="drawer-panel">
+        <div class="drawer-header">
+            <h2>Achat Express</h2>
+            <button id="drawer-close-btn" class="drawer-close-btn" aria-label="Fermer">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+            </button>
+        </div>
+        <div class="drawer-body">
+            <div id="drawer-item-display" class="drawer-item"></div>
+            <form id="direct-checkout-form" class="drawer-form" novalidate>
+                <h3>Informations de Livraison</h3>
+                <div class="form-group">
+                    <label for="drawer-fullName">Nom et Prénom</label>
+                    <input type="text" id="drawer-fullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="drawer-phone">Numéro de Téléphone</label>
+                    <input type="tel" id="drawer-phone" name="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="drawer-wilaya">Wilaya</label>
+                    <div class="custom-select">
+                        <select id="drawer-wilaya" name="wilaya" required>
+                            <option value="" disabled selected>Sélectionnez votre wilaya</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Méthode de Livraison</label>
+                    <div class="radio-group">
+                        <label for="drawer-delivery-home">
+                            <input type="radio" id="drawer-delivery-home" name="deliveryMethod" value="home" checked>
+                            Livraison à domicile
+                        </label>
+                        <label for="drawer-delivery-stopdesk" id="drawer-stopdesk-label">
+                            <input type="radio" id="drawer-delivery-stopdesk" name="deliveryMethod" value="stopdesk">
+                            Stop Desk
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" id="drawer-address-container">
+                    <label for="drawer-address">Adresse Complète</label>
+                    <textarea id="drawer-address" name="address" rows="3" required></textarea>
+                </div>
+                <div class="form-group" id="drawer-stopdesk-container" style="display: none;">
+                    <label>Point de relais (Stop Desk)</label>
+                    <div id="drawer-stopdesk-info"></div>
+                </div>
+            </form>
+        </div>
+        <div class="drawer-footer">
+            <div class="drawer-total">
+                <span>Total</span>
+                <span id="drawer-total-price">0,00 DA</span>
+            </div>
+            <button id="drawer-confirm-order-btn" class="btn-primary" type="submit" form="direct-checkout-form">
+                Confirmer la Commande
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================== -->
+<!--          END: RESTORED TOASTS & DRAWERS            -->
+<!-- ================================================== -->
+
+
+<!-- ================================================== -->
+<!--                 ALL SITE SCRIPTS                   -->
+<!-- ================================================== -->
+
+<!-- Dynamic User Data -->
+<script nonce="<%= nonce %>">
+    window.USER_DETAILS = <%- JSON.stringify(userDetails || null) %>;
+</script>
+
+<!-- External Libraries -->
+<script src="https://kit.fontawesome.com/dda4e988bf.js" crossorigin="anonymous" nonce="<%= nonce %>"></script>
+
+<!-- Local Cookie Consent Library -->
+<link rel="stylesheet" href="/styles/consent-banner.css">
+<script src="/functions/consent-banner.js" nonce="<%= nonce %>"></script>
+
+<!-- ================================================== -->
+<!--           START: REVISED SCRIPT LOADING            -->
+<!-- ================================================== -->
+
+<!-- 1. Global Scripts (Load on EVERY page) -->
+<script src="/functions/script.js" nonce="<%= nonce %>"></script>
+<script src="/functions/cart.js" nonce="<%= nonce %>"></script>
+
+<!-- 2. Page-Specific Scripts (Load CONDITIONALLY) -->
+<% if (typeof pageType !== 'undefined') { %>
+
+    <% if (pageType === 'cart') { %>
+        <script src="/functions/panier.js" nonce="<%= nonce %>"></script>
+    <% } %>
+
+    <% if (pageType === 'product') { %>
+        <script src="/functions/product.js" nonce="<%= nonce %>"></script>
+        <script src="/functions/pack.js" nonce="<%= nonce %>"></script>
+        <script src="/functions/direct-checkout.js" nonce="<%= nonce %>"></script>
+    <% } %>
+
+    <% if (pageType === 'results') { %>
+        <script src="/functions/resultats.js" nonce="<%= nonce %>"></script>
+    <% } %>
+
+    <% if (pageType === 'admin') { %>
+        <script src="/functions/admin.js" nonce="<%= nonce %>"></script>
+    <% } %>
+
+<% } %>
+
+<!-- ================================================== -->
+<!--            END: REVISED SCRIPT LOADING             -->
+<!-- ================================================== -->
+
+
+<!-- Cookie Consent Initialization (MUST BE LAST) -->
+<script nonce="<%= nonce %>">
+document.addEventListener('DOMContentLoaded', function () {
+    if (window.CookieConsent) {
+        CookieConsent.run({
+            guiOptions: {
+                consentModal: {
+                    layout: 'box',
+                    position: 'bottom left',
+                    equalWeightButtons: true,
+                    flipButtons: false
+                },
+                preferencesModal: {
+                    layout: 'box',
+                    position: 'right',
+                    equalWeightButtons: true,
+                    flipButtons: false
+                }
+            },
+            categories: {
+                necessary: {
+                    readOnly: true
+                }
+            },
+            language: {
+                default: 'fr',
+                translations: {
+                    fr: {
+                        consentModal: {
+                            title: 'Ce site utilise des cookies',
+                            description: 'Nous utilisons des cookies pour assurer le bon fonctionnement du site, comme la gestion de votre panier et de votre session. En cliquant sur "Accepter", vous consentez à l\'utilisation de ces cookies essentiels.',
+                            acceptAllBtn: 'Accepter',
+                            acceptNecessaryBtn: 'Refuser',
+                            showPreferencesBtn: 'Gérer les préférences',
+                            footer: '<a href="/politique-de-confidentialite">Politique de Confidentialité</a>'
+                        },
+                        preferencesModal: {
+                            title: 'Préférences de consentement',
+                            acceptAllBtn: 'Accepter tout',
+                            acceptNecessaryBtn: 'Refuser tout',
+                            savePreferencesBtn: 'Enregistrer',
+                            closeIconLabel: 'Fermer',
+                            sections: [
+                                {
+                                    title: 'Utilisation des cookies',
+                                    description: 'Nous utilisons des cookies pour le fonctionnement de base du site. Ces cookies sont nécessaires et ne peuvent pas être désactivés.'
+                                },
+                                {
+                                    title: 'Cookies Essentiels <span class="pm__badge">Toujours Actif</span>',
+                                    description: 'Ces cookies sont indispensables au fonctionnement du site. Ils permettent de gérer des fonctionnalités de base comme votre panier d\'achat, votre connexion à votre compte, et la sécurité du site.',
+                                    linkedCategory: 'necessary'
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        console.error('CookieConsent script not loaded. This is likely due to a browser ad blocker.');
+    }
+});
+</script>

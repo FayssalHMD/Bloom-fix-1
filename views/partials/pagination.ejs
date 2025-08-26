@@ -1,0 +1,42 @@
+<% if (totalPages > 1) { %>
+    <div class="pagination-container">
+        <%# Previous Button %>
+        <% const queryParam = locals.baseUrl && locals.baseUrl.includes('produit') ? 'reviewPage' : 'page'; %>
+        <a href="<%= baseUrl %>?<%= queryParam %>=<%= Math.max(1, currentPage - 1) %><%= locals.currentStatus ? '&status=' + currentStatus : '' %>" 
+           class="pagination-link prev <%= currentPage <= 1 ? 'disabled' : '' %>">
+            « Précédent
+        </a>
+
+        <%# Page Numbers Logic %>
+        <div class="pagination-numbers">
+            <% const pagesToShow = []; %>
+            <% const window = 2; %>
+            <% pagesToShow.push(1); %>
+            <% if (currentPage > window + 2) { pagesToShow.push('...'); } %>
+            <% for (let i = Math.max(2, currentPage - window); i <= Math.min(totalPages - 1, currentPage + window); i++) { %>
+                <% if (!pagesToShow.includes(i)) { pagesToShow.push(i); } %>
+            <% } %>
+            <% if (currentPage < totalPages - window - 1) { %>
+                <% if (!pagesToShow.includes('...')) { pagesToShow.push('...'); } %>
+            <% } %>
+            <% if (totalPages > 1) { %>
+                <% if (!pagesToShow.includes(totalPages)) { pagesToShow.push(totalPages); } %>
+            <% } %>
+            <% pagesToShow.forEach(pageNumber => { %>
+                <% if (pageNumber === '...') { %>
+                    <span class="pagination-link ellipsis">...</span>
+                <% } else if (pageNumber === currentPage) { %>
+                    <span class="pagination-link active"><%= pageNumber %></span>
+                <% } else { %>
+                    <a href="<%= baseUrl %>?<%= queryParam %>=<%= pageNumber %><%= locals.currentStatus ? '&status=' + currentStatus : '' %>" class="pagination-link"><%= pageNumber %></a>
+                <% } %>
+            <% }) %>
+        </div>
+
+        <%# Next Button %>
+        <a href="<%= baseUrl %>?<%= queryParam %>=<%= Math.min(totalPages, currentPage + 1) %><%= locals.currentStatus ? '&status=' + currentStatus : '' %>" 
+           class="pagination-link next <%= currentPage >= totalPages ? 'disabled' : '' %>">
+            Suivant »
+        </a>
+    </div>
+<% } %>

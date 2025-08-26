@@ -1,0 +1,40 @@
+[
+  {
+    "customer": {
+      "fullName": "Fayçal",
+      "phone": "0651846425",
+      "wilaya": "Alger",
+      "deliveryMethod": "stopdesk",
+      "address": ""
+    },
+    "items": [
+      {
+        "id": "brume-petale-hydratante",
+        "name": "Brume Pétale Hydratante",
+        "price": 45,
+        "image": "/images/produit2.jpg",
+        "isPack": false,
+        "quantity": 2
+      },
+      {
+        "id": "huile-eclat-radieux",
+        "name": "Huile Éclat Radieux",
+        "price": 82,
+        "image": "/images/produit1.jpg",
+        "isPack": false,
+        "quantity": 2
+      },
+      {
+        "id": "duo-eclat-hydratation",
+        "name": "Duo Éclat & Hydratation",
+        "price": 105,
+        "image": "/images/produit1.jpg",
+        "isPack": true,
+        "quantity": 1
+      }
+    ],
+    "total": "659,00 DA",
+    "id": "order_1753397560260",
+    "createdAt": "2025-07-24T22:52:40.260Z"
+  }
+]

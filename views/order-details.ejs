@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %> - Bloom</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/account.css"> <!-- Link the account stylesheet -->
+</head>
+<body class="no-scroll">
+
+    <%- include('partials/header') %>
+
+    <main class="account-page">
+        <div class="account-container">
+            <!-- Sidebar (same as account.ejs) -->
+            <aside class="account-sidebar">
+                <h2 class="sidebar-title">Mon Compte</h2>
+                <nav class="account-nav">
+                    <a href="/compte" class="account-nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+                        <span>Tableau de bord</span>
+                    </a>
+                    <a href="/compte?view=details" class="account-nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                        <span>Détails du compte</span>
+                    </a>
+                    <a href="/logout" class="account-nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+                        <span>Déconnexion</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <section class="account-content">
+                <div class="content-header order-details-header">
+                    <a href="/compte" class="back-to-orders-link">← Retour aux commandes</a>
+                    <h1>Détails de la Commande</h1>
+                    <p>Commande <strong>#<%= order._id.toString().slice(-6).toUpperCase() %></strong> passée le <%= new Date(order.createdAt).toLocaleDateString('fr-FR') %></p>
+                </div>
+
+               <!-- ================================================== -->
+                <!--     REPLACE THE ENTIRE order-items-section DIV     -->
+                <!-- ================================================== -->
+                <div class="order-items-section">
+                    <% order.items.forEach(item => { %>
+                        <div class="order-details-item">
+                            <img src="<%= item.image %>" alt="<%= item.name %>" class="order-item-image">
+                            <div class="order-item-info">
+                                <div class="item-name-price">
+                                    <span class="item-name"><%= item.name %></span>
+                                    <span class="item-price"><%= item.price.toFixed(2) %> DA</span>
+                                </div>
+                                <div class="item-qty">
+                                    <span>Quantité : <%= item.quantity %></span>
+                                </div>
+                                
+                                <!-- NEW: "Leave a Review" Button -->
+                                <% if (item.productId && !item.isPack) { %>
+                                    <div class="item-review-action">
+                                        <a href="/produit/<%= item.productId.id %>#product-reviews-section" class="btn-leave-review">
+                                            Laisser un avis
+                                        </a>
+                                    </div>
+                                <% } %>
+                                
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+                <!-- ================================================== -->
+
+                    <!-- Right Column: Summary & Address -->
+                    <div class="order-summary-section">
+                        <div class="summary-card">
+                            <h3>Résumé</h3>
+                            <div class="summary-row">
+                                <span>Sous-total</span>
+                                <span><%= order.items.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2) %> DA</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Livraison</span>
+                                <span><%= (parseFloat(order.total.replace(',', '.')) - order.items.reduce((acc, item) => acc + (item.price * item.quantity), 0)).toFixed(2) %> DA</span>
+                            </div>
+                            <div class="summary-total">
+                                <span>Total</span>
+                                <span><%= order.total %> DA</span>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Adresse de livraison</h3>
+                            <div class="address-details">
+                                <p><strong>Nom:</strong> <%= order.customer.fullName %></p>
+                                <p><strong>Téléphone:</strong> <%= order.customer.phone %></p>
+                                <% if (order.customer.address) { %>
+                                    <p><strong>Adresse:</strong> <%= order.customer.address %></p>
+                                <% } %>
+                                <p><strong>Wilaya:</strong> <%= order.customer.wilaya %></p>
+                                <p><strong>Méthode:</strong> <%= order.customer.deliveryMethod %></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+  
+</body>
+</html>

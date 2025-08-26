@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <!-- We will create this new CSS file next -->
+    <link rel="stylesheet" href="/styles/resultats.css"> 
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="results-page">
+        <!-- Hero Section -->
+        <section class="results-hero">
+            <div class="results-hero-content">
+                <h1>Leurs Histoires, Vos Résultats.</h1>
+                <p>Chez Bloom, notre plus grande fierté est le sourire de nos clientes. Découvrez des transformations authentiques et des mots doux partagés par notre communauté. Chaque résultat est une histoire, et nous sommes impatients de faire partie de la vôtre.</p>
+            </div>
+        </section>
+
+        <!-- Section 1: Transformations (Before/After) -->
+        <% if (beforeAfters && beforeAfters.length > 0) { %>
+        <section class="transformations-section">
+            <h2 class="section-title">Transformations</h2>
+            <div class="transformations-grid">
+                <% beforeAfters.forEach(testimonial => { %>
+                    <div class="transformation-card">
+                        <div class="magic-reveal-slider">
+                            <img src="<%= testimonial.afterImage %>" alt="Résultat Après" class="after-image">
+                            <div class="before-image-container">
+                                <img src="<%= testimonial.beforeImage %>" alt="Résultat Avant" class="before-image">
+                            </div>
+                            <div class="slider-handle">
+                                <div class="slider-arrow left"></div>
+                                <div class="slider-arrow right"></div>
+                            </div>
+                        </div>
+                        <div class="transformation-content">
+                            <% if (testimonial.quote) { %>
+                                <blockquote>"<%= testimonial.quote %>"</blockquote>
+                            <% } %>
+                            <% if (testimonial.story) { %>
+                                <h3>Le Récit</h3>
+                                <p><%= testimonial.story %></p>
+                            <% } %>
+                            <% if (testimonial.featuredProducts && testimonial.featuredProducts.length > 0) { %>
+                                <h4>La Routine Bloom Utilisée</h4>
+                                <div class="routine-products">
+                                    <% testimonial.featuredProducts.forEach(product => { %>
+                                        <a href="/produit/<%= product.id %>" class="routine-product-item" title="<%= product.name %>">
+                                            <img src="<%= product.mainImage %>" alt="<%= product.name %>">
+                                        </a>
+                                    <% }) %>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+        <% } %>
+
+        <!-- Section 2: Mots Doux (Instagram Wall) -->
+        <% if (instagrams && instagrams.length > 0) { %>
+        <section class="instagram-wall-section">
+            <h2 class="section-title">Mots Doux de la Communauté</h2>
+            <div class="masonry-grid">
+                <% instagrams.forEach(testimonial => { %>
+                    <div class="masonry-item">
+                        <img src="<%= testimonial.instagramImage %>" alt="Témoignage Instagram" loading="lazy">
+                          <% if (testimonial.quote) { %>
+                            <div class="masonry-item-overlay">
+                                <p>"<%= testimonial.quote %>"</p>
+                            </div>
+                        <% } %>
+                    </div>
+                <% }) %>
+            </div>
+        </section>
+        <% } %>
+    </main>
+
+    <!-- Lightbox Structure -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close">×</button>
+        <button class="lightbox-prev">❮</button>
+        <button class="lightbox-next">❯</button>
+
+        <div class="lightbox-content">
+            <img src="" alt="Témoignage en grand" id="lightbox-img">
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+   
+</body>
+</html>

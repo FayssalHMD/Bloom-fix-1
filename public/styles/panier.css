@@ -1,0 +1,232 @@
+/* styles/panier.css */
+
+.cart-page-main {
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    min-height: 60vh;
+}
+
+.cart-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+    color: var(--text-color-primary);
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cart-item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+}
+
+.cart-item-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 10px;
+}
+
+.cart-item-price {
+    font-size: 1rem;
+    color: var(--text-color-secondary);
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity-btn-cart {
+    background-color: var(--background-color-secondary);
+    border: 1px solid var(--border-color);
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 1.2rem;
+}
+
+.cart-item-total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    min-width: 100px;
+    text-align: right;
+}
+
+.remove-item-btn {
+    background: none;
+    border: none;
+    color: #ff4d4d;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.cart-summary {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: var(--background-color-secondary);
+    border-radius: 8px;
+    max-width: 400px;
+    margin-left: auto;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.total-line {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#checkout-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+}
+
+.empty-cart-message {
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 50px 0;
+    color: var(--text-color-secondary);
+}
+
+
+/* ================================================== */
+/*    STYLES FOR CART ITEM DELETE CONFIRMATION MODAL  */
+/* ================================================== */
+
+/* Target the action container to add space between buttons */
+#cart-confirm-modal .admin-prompt-actions {
+    gap: 15px; /* Increases the space between the two buttons */
+}
+
+/* Style the "Annuler" (Cancel) button as a secondary/ghost button */
+#cart-confirm-cancel-btn {
+    background-color: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+}
+
+#cart-confirm-cancel-btn:hover {
+    background-color: var(--border-color);
+    border-color: var(--border-color);
+}
+
+/* Style the "Supprimer" (Delete) button as a primary destructive action */
+#cart-confirm-confirm-btn {
+    background-color: #e74c3c; /* A clear, but not overly harsh, red */
+    border-color: #e74c3c;
+    color: var(--white);
+}
+
+#cart-confirm-confirm-btn:hover {
+    background-color: #c0392b; /* A darker red on hover */
+    border-color: #c0392b;
+}
+
+/* --- Dark Mode Adjustments --- */
+.dark-mode #cart-confirm-cancel-btn {
+    border-color: #555;
+    color: var(--dark-theme-text);
+}
+
+.dark-mode #cart-confirm-cancel-btn:hover {
+    background-color: #555;
+}
+
+
+
+/* public/styles/panier.css */
+
+/* ================================================== */
+/*         NEW STYLES FOR DYNAMIC SHIPPING            */
+/* ================================================== */
+
+/* Style for the Stop Desk info box */
+.stopdesk-info-box {
+    background-color: var(--background-color);
+    border: 1px solid var(--accent-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    animation: fadeIn 0.4s ease;
+}
+
+.dark-mode .stopdesk-info-box {
+    background-color: var(--dark-theme-bg);
+}
+
+.stopdesk-info-box p {
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+}
+
+.stopdesk-info-box p:last-child {
+    margin-bottom: 0;
+}
+
+.stopdesk-info-box strong {
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.stopdesk-info-box a {
+    color: var(--accent-color);
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stopdesk-info-box a:hover {
+    text-decoration: underline;
+}
+
+.phone-error-message {
+    color: #E57373; /* A softer, more elegant red */
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: block;
+    margin-top: 6px;
+    height: 1.2em; /* Reserve space to prevent layout shift */
+    opacity: 0; /* Hidden by default */
+    transform: translateY(-5px); /* Start slightly up */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* We will now use the text content to trigger visibility */
+.phone-error-message:not(:empty) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Style for disabled radio buttons */
+.shipping-calculator .radio-group label:has(input:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: transparent;
+    border-color: var(--border-color);
+}

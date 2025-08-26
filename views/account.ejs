@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %> - Bloom</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body class="no-scroll">
+
+    <%- include('partials/header') %>
+
+    <main class="account-page">
+        <div class="account-container">
+            <aside class="account-sidebar">
+                <h2 class="sidebar-title">Mon Compte</h2>
+                <nav class="account-nav">
+                    <a href="/compte" class="account-nav-link <%= currentView === 'dashboard' ? 'active' : '' %>">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
+                        <span>Tableau de bord</span>
+                    </a>
+                    <a href="/compte?view=details" class="account-nav-link <%= currentView === 'details' ? 'active' : '' %>">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                        <span>Détails du compte</span>
+                    </a>
+                    <!-- MODIFICATION START: Add Wishlist Link -->
+                    <a href="/compte?view=wishlist" class="account-nav-link <%= currentView === 'wishlist' ? 'active' : '' %>">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                        <span>Ma Wishlist</span>
+                    </a>
+                    <!-- MODIFICATION END -->
+
+
+
+                    <a href="/logout" class="account-nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+                        <span>Déconnexion</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <section class="account-content">
+                <% if (currentView === 'dashboard') { %>
+                    <!-- DASHBOARD VIEW -->
+                    <div class="content-header">
+                        <h1>Tableau de bord</h1>
+                        <p>Bonjour, <strong><%= user.name %></strong> ! D'ici, vous pouvez consulter vos commandes récentes.</p>
+                    </div>
+                    <div class="content-body">
+                        <h3>Historique des Commandes</h3>
+                        <% if (orders.length > 0) { %>
+                            <div class="orders-table-container">
+                                <table class="orders-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Commande</th>
+                                            <th>Date</th>
+                                            <th>Statut</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                   <tbody>
+                                        <% orders.forEach(order => { %>
+                                            <!-- MODIFICATION START: Wrap the table row in a link -->
+                                            <tr class="clickable-row" onclick="window.location='/compte/commande/<%= order._id %>';">
+                                                <td data-label="Commande">
+                                                    <strong>#<%= order._id.toString().slice(-6).toUpperCase() %></strong>
+                                                </td>
+                                                <td data-label="Date"><%= new Date(order.createdAt).toLocaleDateString('fr-FR') %></td>
+                                                <td data-label="Statut">
+                                                    <span class="status-badge status-<%= order.status.toLowerCase() %>"><%= order.status %></span>
+                                                </td>
+                                                <td data-label="Total"><%= order.total %></td>
+                                            </tr>
+                                            <!-- MODIFICATION END -->
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% } else { %>
+                            <div class="no-orders-message">
+                                <p>Vous n'avez encore passé aucune commande.</p>
+                                <a href="/" class="btn-primary">Commencer vos achats</a>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } else if (currentView === 'details') { %>
+                    <!-- ACCOUNT DETAILS VIEW -->
+                    <div class="content-header">
+                        <h1>Détails du Compte</h1>
+                        <p>Mettez à jour vos informations de livraison pour un paiement plus rapide.</p>
+                    </div>
+                    <div class="content-body">
+                        <% if (successMessage) { %>
+                            <div class="form-success-message">
+                                Vos informations ont été enregistrées avec succès.
+                            </div>
+                        <% } %>
+                        <form action="/compte/details" method="POST" class="account-details-form">
+                           
+                            <div class="form-group">
+                                <label for="fullName">Nom Complet</label>
+                                <input type="text" id="fullName" name="fullName" value="<%= userDetails.shippingInfo.fullName || '' %>" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Numéro de Téléphone</label>
+                                <input type="tel" id="phone" name="phone" value="<%= userDetails.shippingInfo.phone || '' %>" required>
+                            </div>
+                            <div class="form-group full-width"> <!-- Make Wilaya full width for better layout -->
+                                <label for="wilaya">Wilaya</label>
+                                <!-- THIS IS THE CHANGED PART -->
+                                <select id="wilaya" name="wilaya" required>
+                                    <option value="" disabled <%= !userDetails.shippingInfo.wilaya ? 'selected' : '' %>>
+                                        Choisissez votre Wilaya
+                                    </option>
+                                    <% if (locals.wilayas && wilayas.length > 0) { %>
+                                        <% wilayas.forEach(wilaya => { %>
+                                            <option value="<%= wilaya %>" <%= (userDetails.shippingInfo.wilaya === wilaya) ? 'selected' : '' %>>
+                                                <%= wilaya %>
+                                            </option>
+                                        <% }) %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="address">Adresse (pour livraison à domicile)</label>
+                                <textarea id="address" name="address" rows="3"><%= userDetails.shippingInfo.address || '' %></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+                            </div>
+                        </form>
+                    </div>
+                <!-- MODIFICATION START: Add Wishlist View -->
+              <% } else if (currentView === 'wishlist') { %>
+                    <div class="content-header">
+                        <h1>Ma Wishlist</h1>
+                        <p>Vos produits et packs favoris, tous au même endroit.</p>
+                    </div>
+                    <div class="content-body">
+                        <% if (wishlistItems && wishlistItems.length > 0) { %>
+                            <div class="wishlist-grid">
+                                <% wishlistItems.forEach(item => { %>
+                                    <% if (item.productId) { %>
+                                        <% const product = item.productId; %>
+                                        <article class="product-card">
+                                            <button class="wishlist-btn active" data-item-id="<%= product._id %>" data-item-type="Product">
+                                                <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                                </svg>
+                                            </button>
+                                            <div class="product-image-wrapper">
+                                                <!-- FIX: Use product.mainImage with a placeholder fallback -->
+                                                <img src="<%= product.mainImage || '/images/placeholder.png' %>" alt="<%= product.name %>" class="product-image">
+                                            </div>
+                                            <div class="product-card-content">
+                                                <h3><%= product.name %></h3>
+                                                <p class="product-description"><%= product.short_description %></p>
+                                                <span class="product-price"><%= product.price %> DA</span>
+                                                <a href="/produit/<%= product.id %>" class="product-btn">Voir les détails</a>
+                                            </div>
+                                        </article>
+                                    <% } else if (item.packId) { %>
+                                        <% const pack = item.packId; %>
+                                        <article class="pack-card">
+                                             <button class="wishlist-btn active" data-item-id="<%= pack._id %>" data-item-type="Pack">
+                                                <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                                </svg>
+                                            </button>
+                                            <div class="product-image-wrapper">
+                                                <!-- FIX: Use pack.mainImage with a placeholder fallback -->
+                                                <img src="<%= pack.mainImage || '/images/placeholder.png' %>" alt="<%= pack.name %>" class="product-image">
+                                            </div>
+                                            <div class="pack-card-content">
+                                                <h3><%= pack.name %></h3>
+                                                <p class="pack-contents"><%= pack.contents %></p>
+                                                <div class="pack-pricing">
+                                                    <span class="original-price"><%= pack.originalPrice %> DA</span>
+                                                    <span class="discounted-price"><%= pack.discountedPrice %> DA</span>
+                                                </div>
+                                                <a href="/packs/<%= pack.id %>" class="product-btn">Voir les détails</a>
+                                            </div>
+                                        </article>
+                                    <% } %>
+                                <% }) %>
+                            </div>
+                        <% } else { %>
+                            <div class="no-orders-message">
+                                <p>Votre wishlist est vide.</p>
+                                <a href="/" class="btn-primary">Explorer la collection</a>
+                            </div>
+                        <% } %>
+                    </div>
+               <% } %>
+
+            </section>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+    <%- include('partials/modals') %>
+
+
+ 
+</body>
+</html>

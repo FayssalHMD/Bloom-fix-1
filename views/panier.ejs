@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Panier - Bloom</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="cart-page-main">
+        <div class="cart-container">
+            <!-- This container will be shown/hidden by JS based on cart content -->
+            <div id="cart-content-wrapper">
+                <h1>Votre Panier</h1>
+                <div class="cart-layout">
+                    <!-- Left Panel: Items -->
+                    <div id="cart-items-panel">
+                        <!-- Items will be dynamically inserted here -->
+                    </div>
+
+                    <!-- Right Panel: Summary -->
+                    <div class="cart-summary-panel">
+                        <h2>Résumé de la Commande</h2>
+                        <div class="summary-row">
+                            <span>Sous-total</span>
+                            <span id="summary-subtotal">0,00 DA</span>
+                        </div>
+                        
+                        <div class="shipping-calculator">
+                            <div class="form-group">
+                                <label for="summary-wilaya">Wilaya</label>
+                                <div class="custom-select">
+                                    <select id="summary-wilaya" name="wilaya" required>
+                                        <option value="" disabled selected>Choisir votre Wilaya</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Méthode de Livraison</label>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="summary-delivery" value="stopdesk" checked> Stop Desk</label>
+                                    <label><input type="radio" name="summary-delivery" value="home"> À Domicile</label>
+                                </div>
+                             <!-- ================================================== -->
+                                <!--         START: NEW STOP DESK INFO BOX              -->
+                                <!-- ================================================== -->
+                                <div id="stopdesk-info-box" class="stopdesk-info-box" style="display: none;">
+                                    <!-- Content will be injected by JavaScript -->
+                                </div>
+                                <!-- ================================================== -->
+                                <!--          END: NEW STOP DESK INFO BOX               -->
+                                <!-- ================================================== -->    
+                            </div>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Frais de livraison</span>
+                            <span id="summary-shipping">0,00 DA</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total-row">
+                            <span>Total</span>
+                            <span id="summary-total">0,00 DA</span>
+                        </div>
+
+                        <!-- ================================================== -->
+                        <!--         START OF NEW CHECKOUT FORM SECTION         -->
+                        <!-- ================================================== -->
+                        <div id="checkout-details-form" style="display: none;">
+                            <div class="form-group">
+                                <label for="checkout-name">Nom et Prénom</label>
+                                <input type="text" id="checkout-name" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="checkout-phone">Numéro de téléphone</label>
+                                <input type="tel" id="checkout-phone" name="phone" required>
+                                <!-- ================================================== -->
+                                <!--         START: NEW PHONE VALIDATION MESSAGE        -->
+                                <!-- ================================================== -->
+                                <span id="phone-error-message" class="phone-error-message"></span>
+                                <!-- ================================================== -->
+                                <!--          END: NEW PHONE VALIDATION MESSAGE         -->
+                                <!-- ================================================== -->
+                            </div>
+                            <!-- This address field will also be hidden until "À Domicile" is selected -->
+                            <div class="form-group" id="checkout-address-group" style="display: none;">
+                                <label for="checkout-address">Votre adresse complète</label>
+                                <textarea id="checkout-address" name="address" placeholder="Commune, rue, etc..."></textarea>
+                            </div>
+                            <button id="confirm-order-btn">Passer Commande</button>
+                        </div>
+                        <!-- ================================================== -->
+                        <!--          END OF NEW CHECKOUT FORM SECTION          -->
+                        <!-- ================================================== -->
+
+                        <button id="checkout-btn">Finaliser ma Commande</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- This container is shown only when the cart is empty -->
+            <div id="empty-cart-container" style="display: none;">
+                <h2>Votre panier est vide.</h2>
+                <p>Parcourez nos collections pour trouver quelque chose que vous aimez.</p>
+                <a href="/#nos-incontournables" class="btn-primary">Continuer vos achats</a>
+            </div>
+        </div>
+    </main>
+
+
+    <%- include('partials/footer') %>
+    <%- include('partials/modals') %> 
+
+
+   
+
+
+
+</body>
+</html>

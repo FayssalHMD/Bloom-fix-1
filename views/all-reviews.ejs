@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %> - Bloom</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/reviews.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="reviews-page-main">
+        <div class="reviews-container">
+            <div class="reviews-header">
+                <h1>Ce qu'en disent nos clientes</h1>
+                <p>Découvrez les expériences authentiques de notre communauté avec les produits Bloom.</p>
+            </div>
+
+            <div class="no-orders-message">
+                <p>Découvrez les avis de nos clientes directement sur chaque page de produit.</p>
+                <a href="/#nos-produits" class="btn-primary">Explorer nos produits</a>
+            </div>
+        </div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    <%- include('partials/modals') %>
+
+
+</body>
+</html>

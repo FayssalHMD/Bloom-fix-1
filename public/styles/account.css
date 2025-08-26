@@ -1,0 +1,554 @@
+:root {
+    --account-bg-light: #F9F5F0;
+    --account-bg-dark: #252525;
+}
+
+.account-hub-main {
+    padding: 2rem;
+    background-color: var(--account-bg-light);
+    min-height: calc(100vh - var(--header-height));
+    transition: var(--theme-transition);
+}
+
+.dark-mode .account-hub-main {
+    background-color: var(--account-bg-dark);
+}
+
+.account-hub-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+}
+
+.account-sidebar {
+    background-color: var(--background-color);
+    padding: 2rem;
+    border-radius: 16px;
+    height: fit-content;
+}
+
+.dark-mode .account-sidebar {
+    border: 1px solid #444;
+}
+
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+}
+
+.sidebar-header p {
+    opacity: 0.7;
+    margin-bottom: 2rem;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-link,
+.sidebar-link-logout {
+    padding: 0.9rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 1rem;
+    font-family: 'Lato', sans-serif;
+    color: var(--text-color);
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+    background-color: var(--primary-action-color);
+    color: var(--text-color) !important;
+}
+
+.dark-mode .sidebar-link:hover,
+.dark-mode .sidebar-link.active {
+    color: var(--dark-theme-bg) !important;
+}
+
+.sidebar-link-logout {
+    margin-top: 1rem;
+    color: #c0392b;
+    font-weight: 700;
+}
+
+.sidebar-link-logout:hover {
+    background-color: #c0392b;
+    color: white !important;
+}
+
+.account-content {
+    background-color: var(--background-color);
+    padding: 2rem 2.5rem;
+    border-radius: 16px;
+}
+
+.dark-mode .account-content {
+    border: 1px solid #444;
+}
+
+.account-content h3 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.account-view {
+    display: none;
+}
+
+.account-view.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.dashboard-card {
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(90, 90, 90, 0.08);
+}
+
+.dark-mode .dashboard-card:hover {
+    box-shadow: none;
+}
+
+.dashboard-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-card p {
+    opacity: 0.7;
+}
+
+.order-item {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.order-item:last-child {
+    border: none;
+}
+
+#account-details-form {
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cart-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 450px;
+    height: 100vh;
+    background-color: var(--background-color);
+    z-index: 1020;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.cart-drawer.active {
+    transform: translateX(0);
+}
+
+.cart-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 1019;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease;
+}
+
+.cart-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.cart-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-header h3 {
+    font-size: 1.5rem;
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+
+.cart-items-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+.cart-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+}
+
+.cart-item-name {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.cart-item-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-item-price {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.cart-item-remove-btn {
+    background: none;
+    border: none;
+    color: #c0392b;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.cart-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--background-color);
+}
+
+.cart-summary p {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+}
+
+.cart-summary p span {
+    font-weight: 700;
+}
+
+.cart-footer .btn-product-primary {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.cart-empty-message {
+    text-align: center;
+    padding: 4rem 2rem;
+    opacity: 0.7;
+}
+
+.cart-count-badge {
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    background-color: #c0392b;
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+@media (max-width: 820px) {
+    .account-hub-layout {
+        grid-template-columns: 1fr;
+    }
+    .account-sidebar {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-hub-main {
+        padding: 1rem;
+    }
+    .account-sidebar,
+    .account-content {
+        padding: 1.5rem;
+    }
+    .cart-drawer {
+        max-width: 100%;
+    }
+}
+
+
+/* ================================================== */
+/*         NEW STYLES FOR ORDER DETAILS PAGE          */
+/* ================================================== */
+
+/* Make table rows clickable */
+.orders-table .clickable-row {
+    transition: background-color 0.2s ease;
+}
+
+.orders-table .clickable-row:hover td {
+    background-color: var(--account-bg-light);
+    cursor: pointer;
+}
+
+
+.dark-mode .orders-table .clickable-row:hover td {
+    background-color: var(--account-bg-dark);
+}
+
+/* Order Details Header */
+.order-details-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.back-to-orders-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-to-orders-link:hover {
+    color: var(--accent-color);
+}
+
+.order-details-header h1 {
+    margin-bottom: 0.25rem;
+}
+
+.order-details-header p {
+    margin: 0;
+}
+
+/* Main Layout */
+.order-details-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/* Items List */
+.order-details-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.order-details-item:last-child {
+    border-bottom: none;
+}
+
+.order-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.order-item-info {
+    flex-grow: 1;
+}
+
+.item-name-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.item-name {
+    font-weight: 700;
+}
+
+.item-price {
+    font-weight: 500;
+}
+
+.item-qty {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Summary & Address Cards */
+.summary-card {
+    background-color: var(--account-bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dark-mode .summary-card {
+    background-color: var(--account-bg-dark);
+}
+
+.summary-card h3 {
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+}
+
+.summary-card p {
+    margin: 0;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 900px) {
+    .order-details-layout {
+        grid-template-columns: 1fr;
+    }
+    .order-summary-section {
+        grid-row: 1; /* Move summary to the top on mobile */
+    }
+}
+
+/* ================================================== */
+/*      NEW STYLES FOR ORDER DETAILS POLISH         */
+/* ================================================== */
+
+.address-details p {
+    margin: 0 0 0.5rem 0; /* Add some spacing between lines */
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.address-details p:last-child {
+    margin-bottom: 0;
+}
+
+.address-details strong {
+    display: inline-block;
+    width: 90px; /* Align the text by giving labels a fixed width */
+    opacity: 0.7;
+}
+
+
+/* public/styles/account.css -> Add these rules at the end */
+
+/* ================================================== */
+/*         NEW STYLES FOR WISHLIST PAGE         */
+/* ================================================== */
+
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+/* We need to re-declare product-card styles here to ensure they apply correctly */
+/* This is a simple override to ensure they appear without the animation */
+.wishlist-grid .product-card,
+.wishlist-grid .pack-card {
+    opacity: 1;
+    transform: none;
+}
+
+
+/* ... at the end of public/styles/account.css ... */
+
+/* ================================================== */
+/*      STEP 5.2: STYLE FOR "LEAVE REVIEW" BUTTON     */
+/* ================================================== */
+
+.item-review-action {
+    margin-top: 0.75rem;
+}
+
+.btn-leave-review {
+    display: inline-block;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-leave-review:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}

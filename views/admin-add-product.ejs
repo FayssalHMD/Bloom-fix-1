@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Produit - Bloom Admin</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+    <link rel="stylesheet" href="/styles/admin-form.css">
+</head>
+<body>
+    <%- include('partials/admin-header') %>
+
+    <main class="admin-main">
+        <div class="composer-header">
+            <h1>Ajouter un Nouveau Produit</h1>
+            <a href="/admin/products" class="btn-cancel">← Annuler</a>
+        </div>
+
+        <%# NEW: ERROR DISPLAY BLOCK %>
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <div class="admin-error-banner">
+                <strong>Erreur de validation :</strong>
+                <ul>
+                    <% errors.forEach(error => { %>
+                        <li><%= error.msg %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+        <%# END OF ERROR DISPLAY BLOCK %>
+
+        <form action="/admin/products/add" method="POST" enctype="multipart/form-data">
+        
+            <div class="composer-main">
+                <!-- Left Panel: Main Info -->
+                <div class="composer-panel composer-panel-main">
+                    <h2>Informations Essentielles</h2>
+                    <p class="subtitle">Définissez l'identité de votre produit.</p>
+                    
+                    <div class="form-group">
+                        <label for="name">Nom du Produit</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Prix (DA)</label>
+                        <input type="number" id="price" name="price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="short_description">Description Courte</label>
+                        <textarea id="short_description" name="short_description" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description Complète</label>
+                        <textarea id="description" name="description" rows="6" required></textarea>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Media & Attributes -->
+                <div class="composer-panel composer-panel-side">
+                    <!-- ================================================== -->
+                    <!--                 START OF CHANGES                 -->
+                    <!-- ================================================== -->
+                    <div class="form-group">
+                        <label for="mainImage">Image Principale (Requise)</label>
+                        <label for="mainImage" class="image-upload-zone">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p>Glissez-déposez ou cliquez</p>
+                            <span>PNG, JPG, WEBP</span>
+                        </label>
+                        <input type="file" id="mainImage" name="mainImage" accept="image/*" style="display: none;" required>
+                        <div id="main-image-preview" class="image-previews"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gallery">Images de la Galerie (Optionnel)</label>
+                        <label for="gallery" class="image-upload-zone">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p>Ajouter des images</p>
+                            <span>Jusqu'à 5 images</span>
+                        </label>
+                        <input type="file" id="gallery" name="gallery" accept="image/*" style="display: none;" multiple>
+                        <div id="gallery-previews" class="image-previews"></div>
+                    </div>
+                    <!-- ================================================== -->
+                    <!--                  END OF CHANGES                  -->
+                    <!-- ================================================== -->
+
+                    <div class="form-group" id="ingredients-tag-input">
+                        <label for="ingredients-input">Ingrédients</label>
+                        <div class="tag-input-container">
+                            <div class="tags"></div>
+                            <input type="text" id="ingredients-input" placeholder="Ajouter et presser Entrée...">
+                            <input type="hidden" name="ingredients">
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="how-to-use-tag-input">
+                        <label for="how-to-use-input">Conseils d'utilisation</label>
+                        <div class="tag-input-container">
+                            <div class="tags"></div>
+                            <input type="text" id="how-to-use-input" placeholder="Ajouter et presser Entrée...">
+                            <input type="hidden" name="how_to_use">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="composer-actions">
+                <a href="/admin/products" class="btn-cancel">Annuler</a>
+                <button type="submit" class="admin-btn admin-btn-primary btn-submit">Enregistrer le Produit</button>
+            </div>
+        </form>
+    </main>
+
+    <%- include('partials/footer') %>
+    <script nonce="<%= nonce %>" src="/functions/admin-form.js"></script>
+
+</body>
+</html>

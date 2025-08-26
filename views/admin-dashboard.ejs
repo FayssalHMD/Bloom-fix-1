@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Bloom Admin</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+</head>
+<body>
+    <%- include('partials/admin-header') %>
+    <main class="admin-main">
+        <div class="admin-header">
+            <h1>Tableau de Bord</h1>
+            <div class="admin-header-actions">
+                <a href="/admin/products" class="admin-btn admin-btn-primary">Gérer les Produits</a>
+                 <a href="/admin/reviews" class="admin-btn admin-btn-secondary">Gérer les Avis</a>
+                 <a href="/admin/testimonials" class="admin-btn admin-btn-secondary">Gérer les Témoignages</a> 
+                 <a href="/admin/messages" class="admin-btn admin-btn-secondary">Messages</a> 
+                <a href="/admin/logout" class="admin-btn admin-btn-secondary">Se déconnecter</a>
+            </div>
+        </div>
+        <div class="admin-filter-nav">
+            <span>Filtrer par:</span>
+            <a href="/admin/dashboard" class="<%= !currentStatus ? 'active' : '' %>">Tous</a>
+            <a href="/admin/dashboard?status=New" class="<%= currentStatus === 'New' ? 'active' : '' %>">New</a>
+            <a href="/admin/dashboard?status=Processing" class="<%= currentStatus === 'Processing' ? 'active' : '' %>">Processing</a>
+            <a href="/admin/dashboard?status=Shipped" class="<%= currentStatus === 'Shipped' ? 'active' : '' %>">Shipped</a>
+            <a href="/admin/dashboard?status=Completed" class="<%= currentStatus === 'Completed' ? 'active' : '' %>">Completed</a>
+            <a href="/admin/dashboard?status=Canceled" class="<%= currentStatus === 'Canceled' ? 'active' : '' %>">Canceled</a>
+        </div>
+        <% if (orders && orders.length > 0) { %>
+            <div class="admin-order-table-container">
+                <div class="admin-order-table-header">
+                    <div>Client</div>
+                    <div>Date</div>
+                    <div>Total</div>
+                    <div>Statut</div>
+                    <div></div>
+                </div>
+                <% orders.slice().forEach(order => { %>
+                    <div class="admin-order-row">
+                        <div class="client-name" data-label="Client"><%= order.customer.fullName %></div>
+                        <div class="order-date" data-label="Date"><%= new Date(order.createdAt).toLocaleDateString('fr-FR') %></div>
+                        <div class="order-total" data-label="Total"><%= order.total %></div>
+                        <div data-label="Statut">
+                            <span class="admin-status-tag admin-status-<%= order.status.toLowerCase() %>"><%= order.status %></span>
+                        </div>
+                        <!-- CHANGED: Added a unique class to the arrow's container div -->
+                        <div class="expand-icon-container">
+                            <div class="expand-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                        </div>
+                        <div class="admin-order-details">
+                            <div class="admin-order-details-content">
+                                <div class="admin-details-section">
+                                    <h3>Détails Client</h3>
+                                    <p><strong>ID Commande:</strong> <span class="order-id"><%= order._id %></span></p>
+                                    <p><strong>Nom:</strong> <%= order.customer.fullName %></p>
+                                    <p><strong>Téléphone:</strong> <%= order.customer.phone %></p>
+                                    <p><strong>Wilaya:</strong> <%= order.customer.wilaya %></p>
+                                    <p><strong>Livraison:</strong> <%= order.customer.deliveryMethod %></p>
+                                    <% if (order.customer.address) { %><p><strong>Adresse:</strong> <%= order.customer.address %></p><% } %>
+                                </div>
+                                <div class="admin-details-section">
+                                    <h3>Articles</h3>
+                                    <% order.items.forEach(item => { %>
+                                        <div class="admin-order-item">
+                                            <span><%= item.quantity %> x <%= item.name %></span>
+                                            <span><%= (item.price * item.quantity).toFixed(2) %> DA</span>
+                                        </div>
+                                    <% }) %>
+                                    <form class="admin-status-update-form" action="/admin/order/update-status/<%= order._id %>" method="POST">
+
+                                        <select name="status">
+                                            <% ['New', 'Processing', 'Shipped', 'Completed', 'Canceled'].forEach(stat => { %>
+                                                <option value="<%= stat %>" <%= order.status === stat ? 'selected' : '' %>><%= stat %></option>
+                                            <% }) %>
+                                        </select>
+                                        <button type="submit" class="btn-update-status">Mettre à jour</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <p class="admin-no-orders-message">Aucune commande à afficher pour ce filtre.</p>
+        <% } %>
+    </main>
+
+      <%- include('partials/pagination', { currentPage, totalPages, baseUrl, currentStatus }) %>
+    <%- include('partials/footer') %>
+    <%- include('partials/admin-modals') %>
+
+</body>
+</html>

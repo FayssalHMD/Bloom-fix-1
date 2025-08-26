@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body class="no-scroll">
+
+    <%- include('partials/header') %>
+
+    <main class="contact-page">
+        <div class="contact-container">
+            <div class="contact-grid">
+
+                <!-- Left Column: Information -->
+                <div class="contact-info-panel">
+                    <h1 class="contact-title">Une question ?<br>On est là pour vous.</h1>
+                    <p class="contact-subtitle">
+                        Que ce soit pour une question sur nos produits, une collaboration, ou un suivi de commande, n'hésitez pas. Nous répondons généralement sous 24 heures.
+                    </p>
+                    <ul class="contact-details-list">
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <a href="mailto:bloomshop.algeria@gmail.com">bloomshop.algeria@gmail.com</a>
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                            <a href="https://instagram.com/bloom.oil_" target="_blank" rel="noopener noreferrer">@bloom.oil_</a>
+                        </li>
+                        <li>
+                            <i class="fa-brands fa-tiktok"></i>
+                            <a href="https://www.tiktok.com/@bloom.oil" target="_blank" rel="noopener noreferrer">@bloom.oil</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Right Column: Form -->
+                <div class="contact-form-panel">
+                    <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+                        <div class="contact-success-message">
+                            <%= successMessage %>
+                        </div>
+                    <% } %>
+
+                    <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+                        <div class="auth-errors">
+                            <ul>
+                                <% errors.forEach(error => { %>
+                                    <li><%= error.msg %></li>
+                                <% }) %>
+                            </ul>
+                        </div>
+                    <% } %>
+                    
+                    <form action="/contact" method="POST" class="contact-form" novalidate>
+                        
+                        <div class="form-group">
+                            <label for="name">Nom et Prénom</label>
+                            <!-- MODIFICATION: Pre-fill if user is logged in -->
+                            <input 
+                                type="text" 
+                                id="name" 
+                                name="name" 
+                                required 
+                                value="<%= user ? user.name : (typeof oldInput !== 'undefined' ? oldInput.name : '') %>"
+                                <%- user ? 'readonly' : '' %>
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Votre Email</label>
+                            <!-- MODIFICATION: Pre-fill if user is logged in -->
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                required 
+                                value="<%= user ? user.email : (typeof oldInput !== 'undefined' ? oldInput.email : '') %>"
+                                <%- user ? 'readonly' : '' %>
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Sujet</label>
+                            <input type="text" id="subject" name="subject" required value="<%= typeof oldInput !== 'undefined' ? oldInput.subject : '' %>">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Votre Message</label>
+                            <textarea id="message" name="message" rows="5" required><%= typeof oldInput !== 'undefined' ? oldInput.message : '' %></textarea>
+                        </div>
+
+                        <div class="form-group honeypot-field">
+                            <label for="comment">Please leave this field empty</label>
+                            <input type="text" id="comment" name="comment" tabindex="-1" autocomplete="off">
+                        </div>
+                        
+                        <button type="submit" class="btn-primary contact-submit-btn">Envoyer le Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+    <%- include('partials/modals') %> 
+
+
+</body>
+</html>

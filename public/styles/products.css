@@ -1,0 +1,864 @@
+:root {
+    --product-bg-shape-light: #f5e9e8;
+    --product-bg-shape-dark: #3a3233;
+    --star-color: #ffc700;
+}
+
+.product-page-main {
+    padding-top: 4rem;
+    overflow: hidden;
+}
+
+.product-detail-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: calc(80vh - var(--header-height));
+    display: flex;
+    align-items: center;
+}
+
+.product-detail-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+    gap: 4rem;
+    width: 100%;
+}
+
+.product-image-gallery {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 1;
+}
+
+.product-image-gallery::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -55%);
+    width: 110%;
+    height: 90%;
+    background-color: var(--product-bg-shape-light);
+    border-radius: 48% 52% 70% 30% / 30% 45% 55% 70%;
+    opacity: 0.6;
+    z-index: -1;
+    transition: background-color 0.4s ease, border-radius 1.2s ease;
+}
+
+.dark-mode .product-image-gallery::before {
+    background-color: var(--product-bg-shape-dark);
+}
+
+.product-image-gallery:hover::before {
+    border-radius: 60% 40% 30% 70% / 70% 30% 70% 30%;
+}
+
+.main-product-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 16px;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0px 10px 20px rgba(74, 74, 74, 0.1));
+}
+
+.product-thumbnail-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 1rem;
+    padding: 0 1rem;
+}
+
+.thumbnail-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    background-color: var(--background-color);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.thumbnail-image:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.thumbnail-image.active {
+    opacity: 1;
+    border-color: var(--primary-action-color);
+    box-shadow: 0 0 15px rgba(245, 225, 227, 0.7);
+}
+
+.product-purchase-panel {
+    background-color: rgba(var(--background-color-rgb), 0.5);
+    padding: 2.5rem;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    z-index: 2;
+}
+
+.dark-mode .product-purchase-panel {
+    border: 1px solid #444;
+}
+
+.product-purchase-panel #product-name {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+}
+
+.product-purchase-panel #product-short-desc {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+.quantity-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--section-bg-light);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 2rem;
+}
+
+.dark-mode .quantity-section {
+    background-color: var(--section-bg-dark);
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.quantity-btn {
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: 400;
+    cursor: pointer;
+    line-height: 1;
+    transition: all 0.2s ease;
+    color: var(--text-color);
+}
+
+.quantity-btn:hover {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.quantity-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--border-color);
+}
+
+.quantity-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    min-width: 2ch;
+    text-align: center;
+}
+
+.price-container #product-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.btn-product-primary,
+.btn-product-secondary {
+    width: 100%;
+    padding: 0.9rem;
+    border: 2px solid var(--primary-action-color);
+    border-radius: 8px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-product-primary {
+    background-color: var(--primary-action-color);
+    color: var(--text-color);
+}
+
+.dark-mode .btn-product-primary {
+    color: var(--dark-theme-bg);
+}
+
+.btn-product-primary:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(245, 225, 227, 0.6);
+}
+
+.dark-mode .btn-product-primary:hover {
+    box-shadow: 0 8px 25px rgba(245, 225, 227, 0.25);
+}
+
+.btn-product-secondary {
+    background-color: transparent;
+    color: var(--text-color);
+}
+
+.btn-product-secondary:hover {
+    background-color: var(--primary-action-color);
+    color: var(--text-color);
+}
+
+.dark-mode .btn-product-secondary:hover {
+    color: var(--dark-theme-bg);
+}
+
+.product-info-tabs {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+}
+
+.tab-nav {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 3rem;
+    gap: 2rem;
+}
+
+.tab-link {
+    background: none;
+    border: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 0 0.5rem 1rem;
+    position: relative;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.tab-link::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--accent-color);
+    transform: scaleX(0);
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.tab-link:hover,
+.tab-link.active {
+    opacity: 1;
+}
+
+.tab-link.active::after {
+    transform: scaleX(1);
+}
+
+.tab-panel {
+    display: none;
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.tab-panel.active {
+    display: block;
+    animation: fadeIn 0.6s ease;
+}
+
+.tab-panel p,
+.tab-panel ul,
+.tab-panel ol {
+    margin-bottom: 1em;
+}
+
+.tab-panel ul,
+.tab-panel ol {
+    padding-left: 1.5rem;
+}
+
+.tab-panel ol {
+    list-style: decimal;
+}
+
+.product-reviews-section {
+    padding: 4rem 2rem;
+    background-color: var(--section-bg-light);
+    transition: var(--theme-transition);
+}
+
+.dark-mode .product-reviews-section {
+    background-color: var(--section-bg-dark);
+}
+
+.reviews-title {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.reviews-list {
+    max-width: 800px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1.5rem;
+}
+
+.review-card {
+    background-color: var(--background-color);
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+}
+
+.review-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.review-card-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.review-card-comment {
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.star-rating-display {
+    display: flex;
+    gap: 0.2rem;
+}
+
+.star-rating-display .star-icon {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    color: var(--star-color); /* Default to filled */
+}
+
+.star-rating-display .star-icon.empty {
+    color: var(--border-color); /* Make empty stars grey */
+    opacity: 0.6;
+}
+
+.star-rating-display .star-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.review-submission-area {
+    text-align: center;
+    margin-top: 4rem;
+}
+
+#leave-review-btn {
+    max-width: 250px;
+}
+
+.checkout-modal,
+.prompt-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 1010;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.checkout-modal.active,
+.prompt-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.checkout-modal-content,
+.prompt-modal-content {
+    background-color: var(--background-color);
+    padding: 2.5rem;
+    border-radius: 16px;
+    width: 90%;
+    position: relative;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.checkout-modal.active .checkout-modal-content,
+.prompt-modal.active .prompt-modal-content {
+    transform: scale(1);
+}
+
+.checkout-modal-content {
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.prompt-modal-content {
+    max-width: 450px;
+    text-align: center;
+}
+
+.checkout-modal-content h2,
+.prompt-modal-content h3 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.prompt-modal-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.prompt-modal-content p {
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.prompt-modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.prompt-modal-actions a {
+    flex: 1;
+    max-width: 200px;
+}
+
+#checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#checkout-form select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234A4A4A%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right .7em top 50%;
+    background-size: .65em auto;
+    padding-right: 2.5rem;
+}
+
+#checkout-form input,
+#checkout-form select,
+#checkout-form textarea {
+    width: 100%;
+    background-color: var(--section-bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.dark-mode #checkout-form input,
+.dark-mode #checkout-form select,
+.dark-mode #checkout-form textarea {
+    background-color: var(--section-bg-dark);
+}
+
+.radio-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.order-summary {
+    background-color: var(--section-bg-light);
+    border: 1px dashed var(--accent-color);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.dark-mode .order-summary {
+    background-color: var(--section-bg-dark);
+}
+
+.order-summary p {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.5rem 0;
+}
+
+.order-summary .summary-total {
+    font-weight: bold;
+    font-size: 1.1rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 960px) {
+    .product-detail-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    .product-image-gallery {
+        grid-row: 1;
+    }
+    .product-image-gallery::before {
+        display: none;
+    }
+    .main-product-image {
+        filter: none;
+    }
+    .product-purchase-panel {
+        grid-row: 2;
+        width: 100%;
+        padding: 2.5rem 1.5rem;
+        border-radius: 24px;
+        box-shadow: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .product-page-main {
+        padding-top: 1rem;
+    }
+    .product-detail-section {
+        padding: 1rem;
+        min-height: auto;
+    }
+    .product-purchase-panel {
+        padding: 2rem 1.5rem;
+    }
+    .product-purchase-panel #product-name {
+        font-size: 1.8rem;
+    }
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+    .product-info-tabs {
+        padding: 2rem 1.5rem 4rem;
+    }
+    .tab-nav {
+        gap: 0.5rem;
+        justify-content: space-between;
+    }
+    .tab-link {
+        font-size: 1.2rem;
+        padding: 0 0.2rem 0.8rem;
+    }
+    .product-reviews-section {
+        padding: 3rem 1.5rem;
+    }
+    .reviews-title {
+        font-size: 2rem;
+    }
+    .product-thumbnail-container {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 0.5rem;
+    }
+}
+
+
+/* ... at the end of public/styles/products.css ... */
+
+/* ================================================== */
+/*         STEP 5.1: NEW STYLES FOR REVIEWS           */
+/* ================================================== */
+
+/* --- Review Card Polish --- */
+.review-card-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.review-card-author {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.review-card-email {
+    font-size: 0.85rem;
+    opacity: 0.6;
+    font-weight: 400;
+}
+
+.no-reviews-message {
+    text-align: center;
+    opacity: 0.7;
+    padding: 2rem 0;
+}
+
+/* --- Review Modal & Form Styling --- */
+#review-form {
+    text-align: left;
+}
+
+#review-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#review-form label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+#review-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--section-bg-light);
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    color: var(--text-color);
+    resize: vertical;
+}
+
+.dark-mode #review-form textarea {
+    background-color: var(--section-bg-dark);
+}
+
+#review-form-error {
+    color: #c0392b;
+    background-color: rgba(192, 57, 43, 0.1);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+/* --- STAR RATING INPUT (THIS FIXES THE BUG) --- */
+.star-rating-input {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 2.5rem;
+    color: var(--border-color);
+    cursor: pointer;
+}
+
+.star-rating-input .star {
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.star-rating-input .star.hover,
+.star-rating-input .star:hover {
+    color: var(--star-color);
+    transform: scale(1.2);
+}
+
+.star-rating-input .star.selected {
+    color: var(--star-color);
+}
+
+/* ... at the end of public/styles/products.css ... */
+
+/* ================================================== */
+/*         STYLES FOR "ALL REVIEWS" PAGE              */
+/* ================================================== */
+
+.all-reviews-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.all-reviews-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.all-reviews-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.back-to-product-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.back-to-product-link:hover {
+    color: var(--accent-color);
+}
+
+.reviews-list-full {
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* Adjust review submission area for two buttons */
+.review-submission-area {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* ... at the end of public/styles/products.css ... */
+
+/* ================================================== */
+/*         FIX FOR REVIEW BUTTON LAYOUT               */
+/* ================================================== */
+
+.review-submission-area .btn-product-primary,
+.review-submission-area .btn-product-secondary {
+    width: auto; /* Override the default width: 100% */
+    min-width: 220px; /* Give them a nice minimum width */
+    max-width: 100%; /* Ensure they don't overflow on very small screens */
+}
+
+
+
+/* ================================================== */
+/*        NEW: REVIEW DELETE BUTTON STYLES            */
+/* ================================================== */
+
+.review-card {
+    position: relative; /* Needed for absolute positioning of the button */
+}
+
+.review-delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    opacity: 0.4;
+    transition: all 0.3s ease;
+}
+
+.review-delete-btn:hover {
+    background-color: rgba(229, 115, 115, 0.1); /* Soft red background */
+    color: #e74c3c; /* Red color */
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.review-delete-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+
+/* ================================================== */
+/*    STYLES FOR REVIEW DELETE CONFIRMATION MODAL     */
+/* ================================================== */
+
+/* Target the action container to add space between buttons */
+#review-delete-confirm-modal .admin-prompt-actions {
+    gap: 15px; /* Increases the space between the two buttons */
+}
+
+/* Style the "Annuler" (Cancel) button as a secondary/ghost button */
+#review-delete-cancel-btn {
+    background-color: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+}
+
+#review-delete-cancel-btn:hover {
+    background-color: var(--border-color);
+    border-color: var(--border-color);
+}
+
+/* Style the "Supprimer" (Delete) button as a primary destructive action */
+#review-delete-confirm-btn {
+    background-color: #e74c3c; /* A clear, but not overly harsh, red */
+    border-color: #e74c3c;
+    color: var(--white);
+}
+
+#review-delete-confirm-btn:hover {
+    background-color: #c0392b; /* A darker red on hover */
+    border-color: #c0392b;
+}
+
+/* --- Dark Mode Adjustments --- */
+.dark-mode #review-delete-cancel-btn {
+    border-color: #555;
+    color: var(--dark-theme-text);
+}
+
+.dark-mode #review-delete-cancel-btn:hover {
+    background-color: #555;
+}

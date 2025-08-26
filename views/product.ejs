@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %> - Bloom</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/products.css">
+</head>
+<body class="no-scroll">
+
+    <%- include('partials/header') %>
+
+    <main class="product-page-main">
+        <section class="product-detail-section">
+            <% const primaryImage = product.mainImage || (product.gallery && product.gallery[0]) || '/images/placeholder.png'; %>
+
+            <div class="product-detail-layout">
+                <div class="product-image-gallery">
+                    <div class="image-bg-shape"></div>
+                    <img src="<%= primaryImage %>" alt="<%= product.name %>" id="main-product-image" class="main-product-image">
+                    
+                    <div class="product-thumbnail-container" id="product-thumbnail-container">
+                        <img src="<%= primaryImage %>" 
+                             alt="Thumbnail for <%= product.name %>" 
+                             class="thumbnail-image active" 
+                             data-src="<%= primaryImage %>">
+
+                        <% if (product.gallery && product.gallery.length > 0) { %>
+                            <% product.gallery.forEach((imageSrc, index) => { %>
+                                <% if (imageSrc !== primaryImage) { %>
+                                    <img src="<%= imageSrc %>" 
+                                         alt="Thumbnail <%= index + 2 %> for <%= product.name %>" 
+                                         class="thumbnail-image" 
+                                         data-src="<%= imageSrc %>">
+                                <% } %>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="product-purchase-panel">
+                    <h1 id="product-name"><%= product.name %></h1>
+                    <p id="product-short-desc"><%= product.short_description %></p>
+
+                    <div class="quantity-section">
+                        <div class="quantity-selector">
+                            <button id="quantity-minus" class="quantity-btn" aria-label="Réduire la quantité">-</button>
+                            <span id="quantity-display" class="quantity-value">1</span>
+                            <button id="quantity-plus" class="quantity-btn" aria-label="Augmenter la quantité">+</button>
+                        </div>
+                        <div class="price-container">
+                            <span id="product-price" data-base-price="<%= product.price %>"><%= parseFloat(product.price).toFixed(2).replace('.', ',') %> DA</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ================================================== -->
+                    <!--                 START OF CHANGES                 -->
+                    <!-- ================================================== -->
+                    <div class="action-buttons">
+                         <button id="add-to-cart-btn" 
+                                class="btn-product-primary" 
+                                data-product-id="<%= product._id %>"
+                                data-product-name="<%= product.name %>"
+                                data-product-price="<%= product.price %>"
+                                data-product-image="<%= primaryImage %>">
+                            Ajouter au Panier
+                        </button>
+                        <button id="buy-now-btn" 
+                                class="btn-product-secondary"
+                                data-item-id="<%= product._id %>"
+                                data-item-name="<%= product.name %>"
+                                data-item-price="<%= product.price %>"
+                                data-item-image="<%= primaryImage %>"
+                                data-is-pack="false">
+                            Acheter Maintenant
+                        </button>
+                    </div>
+                    <!-- ================================================== -->
+                    <!--                  END OF CHANGES                  -->
+                    <!-- ================================================== -->
+                </div>
+            </div>
+        </section>
+
+        <section class="product-info-tabs">
+            <div class="tab-nav">
+                <button class="tab-link active" data-tab="description">Description</button>
+                <button class="tab-link" data-tab="ingredients">Ingrédients</button>
+                <button class="tab-link" data-tab="usage">Conseils d'utilisation</button>
+            </div>
+            <div class="tab-content-container">
+                <div id="tab-description" class="tab-panel active">
+                    <p><%= product.description %></p>
+                </div>
+                <div id="tab-ingredients" class="tab-panel">
+                    <% if (product.ingredients && Array.isArray(product.ingredients)) { %>
+                        <ul>
+                            <% product.ingredients.forEach(function(ingredient) { %>
+                                <li><%- ingredient %></li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </div>
+                <div id="tab-usage" class="tab-panel">
+                    <% if (product.how_to_use && Array.isArray(product.how_to_use)) { %>
+                        <ol>
+                            <% product.how_to_use.forEach(function(step) { %>
+                                <li><%- step %></li>
+                            <% }); %>
+                        </ol>
+                    <% } %>
+                </div>
+            </div>
+        </section>
+
+        <section class="product-reviews-section" id="product-reviews-section">
+            <h2 class="reviews-title">Avis de nos clientes (<%= totalReviewsCount %>)</h2>
+            
+            <div id="reviews-list" class="reviews-list">
+                <% if (reviews && reviews.length > 0) { %>
+                    <% reviews.forEach(review => { %>
+                        <div class="review-card">
+                            <% if (locals.user && review.user && locals.user.id.toString() === review.user._id.toString()) { %>
+                                <button class="review-delete-btn" data-review-id="<%= review._id %>" aria-label="Supprimer mon avis">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+                                </button>
+                            <% } %>
+                            <div class="review-card-header">
+                                <div class="review-card-author">
+                                    <span class="review-card-name"><%= review.name %></span>
+                                    <% if (review.user && review.user.email) { %>
+                                        <span class="review-card-email"><%= maskEmail(review.user.email) %></span>
+                                    <% } %>
+                                </div>
+                                <div class="star-rating-display">
+                                    <% for(let i = 0; i < 5; i++) { %>
+                                        <div class="star-icon <%= i < review.rating ? '' : 'empty' %>">
+                                            <svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <p class="review-card-comment">"<%= review.comment %>"</p>
+                            <div class="review-card-footer">
+                                <span class="review-card-date"><%= new Date(review.createdAt).toLocaleDateString('fr-FR') %></span>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="no-reviews-message">Il n'y a pas encore d'avis pour ce produit. Soyez le premier !</p>
+                <% } %>
+            </div>
+
+            <%- include('partials/pagination', { 
+                currentPage: currentReviewPage, 
+                totalPages: totalReviewPages, 
+                baseUrl: `/produit/${product.id}` 
+            }) %>
+
+            <div class="review-submission-area">
+                <button id="leave-review-btn" class="btn-product-primary">Laisser un avis</button>
+            </div>
+        </section>
+    </main>
+    
+    <%- include('partials/footer') %>
+    <%- include('partials/modals') %> 
+
+    <script nonce="<%= nonce %>">
+        window.productData = <%- JSON.stringify(product) %>;
+    </script>
+    
+
+</body>
+</html>

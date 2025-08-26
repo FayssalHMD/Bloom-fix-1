@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Avis - Bloom Admin</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+</head>
+<body>
+    <%- include('partials/admin-header') %>
+    <main class="admin-main">
+        <div class="admin-header">
+            <h1>Gestion des Avis</h1>
+            <div class="admin-header-actions">
+                <a href="/admin/dashboard" class="admin-btn admin-btn-secondary">Tableau de Bord</a>
+                <a href="/admin/logout" class="admin-btn admin-btn-secondary">Se déconnecter</a>
+            </div>   
+            
+            <!-- ================================================== -->
+            <!--           ADD THIS NEW SEARCH BAR SECTION          -->
+            <!-- ================================================== -->
+            <div class="admin-search-bar-container">
+                <input type="text" id="admin-reviews-search" placeholder="Rechercher...">
+            </div>
+            <!-- ================================================== -->
+        </div>
+
+        <div class="admin-reviews-container">
+            <% if (products && products.length > 0) { %>
+                <table class="admin-reviews-table">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Auteur</th>
+                            <th>Note</th>
+                            <th>Commentaire</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% products.forEach(product => { %>
+                            <% product.reviews.forEach(review => { %>
+                                <tr data-review-id="<%= review._id %>" data-product-id="<%= product._id %>">
+                                    <td data-label="Produit"><%= product.name %></td>
+                                    <td data-label="Auteur">
+                                        <strong><%= review.name %></strong><br>
+                                        <small><%= maskEmail(review.user.email) %></small>
+                                    </td>
+                                    <td data-label="Note" class="star-rating-cell">
+                                        <% for(let i = 0; i < 5; i++) { %>
+                                            <span class="star <%= i < review.rating ? 'filled' : '' %>">★</span>
+                                        <% } %>
+                                    </td>
+                                    <td data-label="Commentaire" class="comment-cell"><%= review.comment %></td>
+                                    <td data-label="Date"><%= new Date(review.createdAt).toLocaleDateString('fr-FR') %></td>
+                                    <td data-label="Actions">
+                                        <button class="btn-delete-review">Supprimer</button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p class="admin-no-orders-message">Aucun avis à afficher pour le moment.</p>
+            <% } %>
+        </div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    <%- include('partials/admin-modals') %>
+
+</body>
+</html>

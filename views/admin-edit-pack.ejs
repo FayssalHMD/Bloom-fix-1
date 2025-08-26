@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier: <%= pack.name %> - Bloom Admin</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+    <link rel="stylesheet" href="/styles/admin-form.css">
+</head>
+<body>
+    <%- include('partials/admin-header') %>
+
+    <main class="admin-main">
+        <div class="composer-header">
+            <h1>Modifier le Pack</h1>
+            <a href="/admin/products" class="btn-cancel">← Annuler</a>
+        </div>
+
+        <%# NEW: ERROR DISPLAY BLOCK %>
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <div class="admin-error-banner">
+                <strong>Erreur de validation :</strong>
+                <ul>
+                    <% errors.forEach(error => { %>
+                        <li><%= error.msg %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+        <%# END OF ERROR DISPLAY BLOCK %>
+
+        <form action="/admin/packs/edit/<%= pack._id %>" method="POST" enctype="multipart/form-data">
+           
+            <div class="composer-main">
+                <!-- Left Panel: Main Info -->
+                <div class="composer-panel composer-panel-main">
+                    <h2>Informations Essentielles</h2>
+                    <p class="subtitle">Mettez à jour l'identité de votre pack.</p>
+                    
+                    <div class="form-group">
+                        <label for="name">Nom du Pack</label>
+                        <input type="text" id="name" name="name" value="<%= pack.name %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="id">ID Pack (slug)</label>
+                        <input type="text" id="id" name="id" value="<%= pack.id %>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="contents">Contenu du pack (description courte)</label>
+                        <input type="text" id="contents" name="contents" value="<%= pack.contents %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="originalPrice">Prix Original (DA)</label>
+                        <input type="number" id="originalPrice" name="originalPrice" value="<%= pack.originalPrice %>" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="discountedPrice">Prix Réduit (DA)</label>
+                        <input type="number" id="discountedPrice" name="discountedPrice" value="<%= pack.discountedPrice %>" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description Complète</label>
+                        <textarea id="description" name="description" rows="5" required><%= pack.description %></textarea>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Media -->
+                <div class="composer-panel composer-panel-side">
+                    <!-- ================================================== -->
+                    <!--                 START OF CHANGES                 -->
+                    <!-- ================================================== -->
+                    <div class="form-group">
+                        <label for="mainImage">Changer l'Image du Pack</label>
+                        <label for="mainImage" class="image-upload-zone">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p>Glissez-déposez ou cliquez</p>
+                            <span>Pour remplacer l'image actuelle</span>
+                        </label>
+                        <input type="file" id="mainImage" name="mainImage" accept="image/*" style="display: none;">
+                        <div id="main-image-preview" class="image-previews">
+                            <% const mainImage = pack.mainImage || pack.imageSrc; %>
+                            <% if (mainImage) { %>
+                                <div class="img-preview">
+                                    <img src="<%= mainImage %>" alt="Image principale actuelle">
+                                </div>
+                            <% } %>
+                        </div>
+                        <input type="hidden" name="existingMainImagePath" value="<%= mainImage %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gallery">Gérer les Images de la Galerie</label>
+                        <label for="gallery" class="image-upload-zone">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p>Ajouter de nouvelles images</p>
+                        </label>
+                        <input type="file" id="gallery" name="gallery" accept="image/*" style="display: none;" multiple>
+                        <div id="gallery-previews" class="image-previews">
+                            <% if (pack.gallery && pack.gallery.length > 0) { %>
+                                <% pack.gallery.forEach(imageSrc => { %>
+                                    <div class="img-preview" data-path="<%= imageSrc %>">
+                                        <img src="<%= imageSrc %>" alt="Image de la galerie">
+                                        <button type="button" class="remove-img-btn" aria-label="Supprimer l'image">×</button>
+                                    </div>
+                                <% }) %>
+                            <% } %>
+                        </div>
+                        <input type="hidden" id="existingGalleryPaths" name="existingGalleryPaths" value='<%- JSON.stringify(pack.gallery || []) %>'>
+                    </div>
+                    <!-- ================================================== -->
+                    <!--                  END OF CHANGES                  -->
+                    <!-- ================================================== -->
+                </div>
+            </div>
+
+            <div class="composer-actions">
+                <a href="/admin/products" class="btn-cancel">Annuler</a>
+                <button type="submit" class="admin-btn admin-btn-primary btn-submit">Mettre à jour le Pack</button>
+            </div>
+        </form>
+    </main>
+
+    <%- include('partials/footer') %>
+        <script nonce="<%= nonce %>" src="functions/admin-form.js"></script>
+
+</body>
+</html>

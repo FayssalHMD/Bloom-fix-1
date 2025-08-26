@@ -1,0 +1,287 @@
+/* === ADMIN FORM COMPOSER - BLOOM === */
+
+.composer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.composer-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    margin: 0;
+}
+.composer-header .btn-cancel {
+    text-decoration: none;
+    color: var(--text-color);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.composer-header .btn-cancel:hover {
+    opacity: 1;
+}
+
+.composer-main {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr;
+    gap: 40px;
+}
+
+.composer-panel {
+    background-color: var(--section-bg-light);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.composer-panel-main h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+.composer-panel-main .subtitle {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 1rem;
+    font-family: 'Lato', sans-serif;
+    transition: all 0.2s ease;
+}
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+.form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px var(--ghost-number-light);
+}
+
+/* --- Image Uploader --- */
+.image-upload-zone {
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.image-upload-zone:hover {
+    border-color: var(--accent-color);
+    background-color: var(--ghost-number-light);
+}
+.image-upload-zone svg {
+    width: 40px;
+    height: 40px;
+    stroke: var(--accent-color);
+    margin-bottom: 10px;
+}
+.image-upload-zone p {
+    margin: 0;
+    font-weight: 600;
+}
+.image-upload-zone span {
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+#image-previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+.img-preview {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+.img-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- Tag Inputs --- */
+.tag-input-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+    transition: all 0.2s ease;
+}
+.tag-input-container:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px var(--ghost-number-light);
+}
+.tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--section-bg-light);
+    border: 1px solid var(--border-color);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+.remove-tag-btn {
+    margin-left: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--accent-color);
+    padding: 0;
+    line-height: 1;
+}
+.tag-input-container input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 5px;
+    background: none;
+    min-width: 120px;
+    color: var(--text-color);
+}
+
+/* --- Action Bar --- */
+.composer-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+}
+.btn-submit {
+    padding: 12px 28px;
+}
+
+/* --- Dark Mode --- */
+.dark-mode .composer-header .btn-cancel { color: var(--dark-theme-text); }
+.dark-mode .composer-panel {
+    background-color: #2A2A2E;
+    border-color: #444;
+}
+.dark-mode .form-group input, .dark-mode .form-group textarea {
+    background-color: var(--dark-theme-bg);
+    border-color: #444;
+    color: var(--dark-theme-text);
+}
+.dark-mode .form-group input:focus, .dark-mode .form-group textarea:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(217, 184, 180, 0.1);
+}
+.dark-mode .image-upload-zone { border-color: #444; }
+.dark-mode .image-upload-zone:hover {
+    border-color: var(--accent-color);
+    background-color: var(--ghost-number-dark);
+}
+.dark-mode .img-preview { border-color: #444; }
+.dark-mode .tag-input-container {
+    background-color: var(--dark-theme-bg);
+    border-color: #444;
+}
+.dark-mode .tag-input-container:focus-within {
+    box-shadow: 0 0 0 3px rgba(217, 184, 180, 0.1);
+}
+.dark-mode .tag { background-color: #333; border-color: #444; }
+.dark-mode .tag-input-container input { color: var(--dark-theme-text); }
+.dark-mode .composer-actions { border-color: #444; }
+
+/* --- Responsiveness --- */
+@media (max-width: 900px) {
+    .composer-main {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ... at the end of the file ... */
+
+/* ================================================== */
+/*         NEW: ENHANCED SELECT ELEMENT STYLES        */
+/* ================================================== */
+
+/* --- Universal Select Styling --- */
+.composer-panel select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 1rem;
+    font-family: 'Lato', sans-serif;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.composer-panel select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(217, 184, 180, 0.4);
+}
+
+/* --- Single-Choice Select (Dropdown) --- */
+.composer-panel select:not([multiple]) {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234A4A4A' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px;
+    padding-right: 40px; /* Make space for the arrow */
+}
+
+/* --- Multi-Choice Select (List) --- */
+.composer-panel select[multiple] {
+    min-height: 120px; /* Give it some default height */
+    padding: 10px; /* Adjust padding for list view */
+}
+
+/* --- Dark Mode Adjustments --- */
+.dark-mode .composer-panel select {
+    background-color: var(--dark-theme-bg);
+    border-color: #555;
+    color: var(--dark-theme-text);
+}
+
+.dark-mode .composer-panel select:not([multiple]) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23EAEAEA' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+}
+
+.dark-mode .composer-panel select:focus {
+    box-shadow: 0 0 0 3px rgba(217, 184, 180, 0.2);
+}

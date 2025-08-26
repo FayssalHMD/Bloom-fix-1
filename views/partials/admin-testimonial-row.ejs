@@ -1,0 +1,38 @@
+<tr>
+    <td data-label="Image">
+        <% if (testimonial.type === 'before-after') { %>
+            <img src="<%= testimonial.beforeImage %>" alt="Before" class="list-img">
+        <% } else { %>
+            <img src="<%= testimonial.instagramImage %>" alt="Instagram" class="list-img">
+        <% } %>
+    </td>
+    <td data-label="Type">
+        <span class="admin-type-tag <%= testimonial.type === 'before-after' ? 'type-before-after' : 'type-instagram' %>">
+            <%= testimonial.type === 'before-after' ? 'Before/After' : 'Instagram' %>
+        </span>
+    </td>
+    <td data-label="Contenu">
+        <% if (testimonial.quote) { %>
+            <p class="testimonial-quote" style="font-weight: 700; font-style: italic; margin-bottom: 5px;">"<%= testimonial.quote %>"</p>
+        <% } %>
+        <% if (testimonial.story) { %>
+            <p class="testimonial-story" style="font-size: 0.9rem; opacity: 0.8;"><%= testimonial.story %></p>
+        <% } %>
+    </td>
+    <td data-label="Produits Associés">
+        <% if (testimonial.featuredProducts && testimonial.featuredProducts.length > 0) { %>
+            <%= testimonial.featuredProducts.map(p => p.name).join(', ') %>
+        <% } else { %>
+            <span>N/A</span>
+        <% } %>
+    </td>
+    <td data-label="Actions">
+        <div class="admin-list-actions">
+            <a href="/admin/testimonials/edit/<%= testimonial._id %>" class="admin-btn-list-action admin-btn-list-edit">Modifier</a>
+            <form action="/admin/testimonials/delete/<%= testimonial._id %>" method="POST">
+            
+                <button type="button" class="admin-btn-list-action admin-btn-list-delete btn-delete" data-item-name="ce témoignage">Supprimer</button>
+            </form>
+        </div>
+    </td>
+</tr>

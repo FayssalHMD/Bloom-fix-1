@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur - Bloom Admin</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            min-height: 60vh;
+        }
+        .error-icon {
+            width: 60px;
+            height: 60px;
+            color: var(--color-danger);
+            margin-bottom: 1.5rem;
+        }
+        .error-container h1 {
+            font-size: 2rem;
+            color: var(--text-color-primary);
+            margin-bottom: 0.5rem;
+        }
+        .error-container p {
+            font-size: 1.1rem;
+            color: var(--text-color-secondary);
+            max-width: 500px;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/admin-header') %>
+
+    <main class="admin-main">
+        <div class="error-container">
+            <div class="error-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
+                </svg>
+            </div>
+            <h1>Une Erreur est Survenue</h1>
+            <p><%= message || "Nous avons rencontré un problème inattendu. Veuillez réessayer plus tard ou contacter le support si le problème persiste." %></p>
+            <a href="/admin/dashboard" class="admin-btn admin-btn-primary">Retour au Tableau de Bord</a>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+ 
+</body>
+</html>

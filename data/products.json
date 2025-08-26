@@ -1,0 +1,48 @@
+[
+  {
+    "id": "huile-eclat-radieux",
+    "name": "Huile Éclat Radieux",
+    "price": "82.00",
+    "short_description": "Une huile soyeuse et vite absorbée pour un teint visiblement lumineux.",
+    "image": "/images/produit1.jpg",
+    "gallery": [
+      "/images/produit1.jpg",
+      "/images/produit2.jpg"
+    ],
+    "description": "Découvrez le secret d'une peau durablement douce. Conçue pour être utilisée après l'épilation, notre formule unique à base d'ingrédients naturels pénètre en profondeur pour affaiblir le bulbe pileux et ralentir significativement la repousse.",
+    "ingredients": [
+      "<strong>Huile de souchet :</strong> Reconnue traditionnellement pour ses propriétés anti-repousse.",
+      "<strong>Extrait de Papaye :</strong> Contient des enzymes qui aident à affaiblir le poil à la racine.",
+      "<strong>Allantoïne :</strong> Actif apaisant et cicatrisant, idéal pour calmer le feu du rasoir ou de l'épilation.",
+      "<strong>Vitamine E :</strong> Antioxydant puissant qui protège et répare la peau."
+    ],
+    "how_to_use": [
+      "Immédiatement après l'épilation (cire, rasoir, épilateur), sur peau propre et sèche, appliquez quelques gouttes de l'huile sur la zone concernée.",
+      "Massez délicatement par mouvements circulaires jusqu'à absorption complète pour apaiser la peau et favoriser la pénétration du produit.",
+      "Continuez à appliquer l'huile quotidiennement, de préférence le soir, pendant les 5 jours suivant l'épilation.",
+      "Répétez le processus après chaque épilation. La régularité est la clé du succès."
+    ]
+  },
+  {
+    "id": "brume-petale-hydratante",
+    "name": "Brume Pétale Hydratante",
+    "price": "45.00",
+    "short_description": "Une brume ultra-fine pour rafraîchir et apaiser les peaux déshydratées.",
+    "image": "/images/produit2.jpg",
+    "gallery": [
+      "/images/produit2.jpg",
+      "/images/product-texture.jpg"
+    ],
+    "description": "Un voile de fraîcheur instantané. Notre brume enrichie en eau de rose et acide hyaluronique hydrate, tonifie et prépare la peau à recevoir ses soins.",
+    "ingredients": [
+      "<strong>Eau de Rose :</strong> Apaise les rougeurs et tonifie la peau.",
+      "<strong>Acide Hyaluronique :</strong> Hydrate en profondeur et repulpe la peau.",
+      "<strong>Glycérine Végétale :</strong> Attire et retient l'humidité pour une hydratation durable."
+    ],
+    "how_to_use": [
+      "Fermez les yeux et vaporisez sur le visage et le cou.",
+      "Utilisez le matin après le nettoyage pour tonifier, ou à tout moment de la journée pour un coup de boost d'hydratation.",
+      "Peut être utilisée sur le maquillage pour le rafraîchir."
+    ]
+  }
+]

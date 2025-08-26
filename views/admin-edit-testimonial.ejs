@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier le Témoignage - Bloom Admin</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+    <link rel="stylesheet" href="/styles/admin-form.css">
+</head>
+<body>
+    <%- include('partials/admin-header') %>
+
+    <main class="admin-main">
+        <div class="composer-header">
+            <h1>Modifier le Témoignage</h1>
+            <a href="/admin/testimonials" class="btn-cancel">← Annuler</a>
+        </div>
+
+        <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+            <div class="admin-error-banner">
+                <strong>Erreur de validation :</strong>
+                <ul>
+                    <% errors.forEach(error => { %>
+                        <li><%= error.msg %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+
+        <form action="/admin/testimonials/edit/<%= testimonial._id %>" method="POST" enctype="multipart/form-data">
+           
+            <div class="composer-main">
+                <!-- Left Panel: Main Info -->
+                <div class="composer-panel composer-panel-main">
+                    <h2>Informations du Témoignage</h2>
+                    <p class="subtitle">Mettez à jour l'histoire de la cliente.</p>
+                    
+                    <div class="form-group">
+                        <label for="type">Type de Témoignage</label>
+                        <select id="testimonial-type-select" name="type" required>
+                            <option value="instagram" <%= oldInput.type === 'instagram' ? 'selected' : '' %>>Instagram</option>
+                            <option value="before-after" <%= oldInput.type === 'before-after' ? 'selected' : '' %>>Before/After</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quote">Citation de la cliente (Optionnel)</label>
+                        <textarea id="quote" name="quote" rows="3"><%= oldInput.quote || '' %></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="story">Le Récit (Optionnel)</label>
+                        <textarea id="story" name="story" rows="5"><%= oldInput.story || '' %></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="featuredProducts">Produits Associés (Optionnel)</label>
+                        <select id="featuredProducts" name="featuredProducts" multiple>
+                            <% products.forEach(product => { %>
+                                <option value="<%= product._id %>" 
+                                    <%= (oldInput.featuredProducts && oldInput.featuredProducts.map(String).includes(String(product._id))) ? 'selected' : '' %>>
+                                    <%= product.name %>
+                                </option>
+                            <% }) %>
+                        </select>
+                        <small>Maintenez Ctrl (ou Cmd sur Mac) pour en sélectionner plusieurs.</small>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Media -->
+                <div class="composer-panel composer-panel-side">
+                    <div id="instagram-fields">
+                        <div class="form-group">
+                            <label for="instagramImage">Image Instagram</label>
+                            <label for="instagramImage" class="image-upload-zone">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                <p>Changer l'image</p>
+                            </label>
+                            <input type="file" id="instagramImage" name="instagramImage" accept="image/*" style="display: none;">
+                            <div id="instagram-image-preview" class="image-previews">
+                                <% if (testimonial.instagramImage) { %>
+                                    <div class="img-preview"><img src="<%= testimonial.instagramImage %>" alt="Aperçu actuel"></div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="before-after-fields">
+                        <div class="form-group">
+                            <label for="beforeImage">Image "Avant"</label>
+                            <label for="beforeImage" class="image-upload-zone"><p>Changer l'image "Avant"</p></label>
+                            <input type="file" id="beforeImage" name="beforeImage" accept="image/*" style="display: none;">
+                            <div id="before-image-preview" class="image-previews">
+                                <% if (testimonial.beforeImage) { %>
+                                    <div class="img-preview"><img src="<%= testimonial.beforeImage %>" alt="Aperçu actuel"></div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="afterImage">Image "Après"</label>
+                            <label for="afterImage" class="image-upload-zone"><p>Changer l'image "Après"</p></label>
+                            <input type="file" id="afterImage" name="afterImage" accept="image/*" style="display: none;">
+                            <div id="after-image-preview" class="image-previews">
+                                <% if (testimonial.afterImage) { %>
+                                    <div class="img-preview"><img src="<%= testimonial.afterImage %>" alt="Aperçu actuel"></div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="composer-actions">
+                <a href="/admin/testimonials" class="btn-cancel">Annuler</a>
+                <button type="submit" class="admin-btn admin-btn-primary btn-submit">Mettre à jour</button>
+            </div>
+        </form>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script nonce="<%= locals.nonce %>">
+        document.addEventListener('DOMContentLoaded', () => {
+            const typeSelect = document.getElementById('testimonial-type-select');
+            const instagramFields = document.getElementById('instagram-fields');
+            const beforeAfterFields = document.getElementById('before-after-fields');
+
+            function toggleFields() {
+                if (typeSelect.value === 'before-after') {
+                    instagramFields.style.display = 'none';
+                    beforeAfterFields.style.display = 'block';
+                } else {
+                    instagramFields.style.display = 'block';
+                    beforeAfterFields.style.display = 'none';
+                }
+            }
+            toggleFields();
+            typeSelect.addEventListener('change', toggleFields);
+        });
+    </script>
+
+        <script nonce="<%= nonce %>" src="/functions/admin-form.js"></script>
+    <script nonce="<%= nonce %>" src="/functions/admin.js"></script>
+</body>
+</html>

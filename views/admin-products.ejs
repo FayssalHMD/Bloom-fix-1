@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de l'Inventaire - Bloom Admin</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+</head>
+<body>
+    <%- include('partials/admin-header') %>
+
+       <%
+        const enhancedProducts = products.map(p => {
+            const productObject = p.toObject();
+            // FIX: Use mainImage if available, otherwise fall back to the old gallery structure.
+            const imageUrl = productObject.mainImage || (productObject.gallery && productObject.gallery[0]);
+            return { 
+                ...productObject, 
+                type: 'Produit', 
+                price: productObject.price, 
+                image: imageUrl, 
+                editUrl: `/admin/products/edit/${p._id}`, 
+                deleteUrl: `/admin/products/delete/${p._id}` 
+            };
+        });
+
+        const enhancedPacks = packs.map(p => {
+            const packObject = p.toObject();
+            const imageUrl = packObject.mainImage || packObject.imageSrc;
+             return { 
+                ...packObject, 
+                type: 'Pack', 
+                price: packObject.discountedPrice, 
+                image: imageUrl, 
+                editUrl: `/admin/packs/edit/${p._id}`, 
+                deleteUrl: `/admin/packs/delete/${p._id}` 
+            };
+        });
+    %>
+    <main class="admin-main">
+        <!-- CHANGED -->
+        <div class="admin-inventory-header">
+            <a href="/admin/dashboard" class="admin-btn-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Retour
+            </a>
+            <h1>Gestion de l'Inventaire</h1>
+            <div class="admin-inventory-actions">
+                <div class="admin-view-switcher">
+                    <button id="grid-view-btn" class="admin-view-btn active" title="Grid View"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></button>
+                    <button id="list-view-btn" class="admin-view-btn" title="List View"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg></button>
+                </div>
+                <div class="split-button-container">
+                    <a href="/admin/products/add" class="admin-btn admin-btn-primary split-button-main">+ Ajouter</a>
+                    <button class="admin-btn admin-btn-primary split-button-toggle"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                    <div class="split-button-dropdown">
+                        <a href="/admin/products/add">Nouveau Produit</a>
+                        <a href="/admin/packs/add">Nouveau Pack</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- CHANGED -->
+        <div id="inventory-container" class="admin-inventory-container grid-view">
+            <div class="admin-inventory-grid-view">
+                <h2 class="admin-inventory-subheader">Produits</h2>
+                <% enhancedProducts.forEach(item => { %><%- include('partials/admin-product-card', { item: item }) %><% }) %>
+                <h2 class="admin-inventory-subheader">Packs</h2>
+                <% enhancedPacks.forEach(item => { %><%- include('partials/admin-product-card', { item: item }) %><% }) %>
+            </div>
+            <div class="admin-inventory-list-view">
+                <table>
+                    <thead><tr><th>Image</th><th>Nom</th><th>Type</th><th>Prix</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        <tr class="list-view-subheader-row"><td colspan="5">Produits</td></tr>
+                        <% enhancedProducts.forEach(item => { %><%- include('partials/admin-product-row', { item: item }) %><% }) %>
+                        <tr class="list-view-subheader-row"><td colspan="5">Packs</td></tr>
+                        <% enhancedPacks.forEach(item => { %><%- include('partials/admin-product-row', { item: item }) %><% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+    <!-- CHANGED: Include the new admin-specific modal -->
+    <%- include('partials/admin-modals') %>
+
+</body>
+</html>

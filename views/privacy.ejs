@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="legal-page">
+        <div class="legal-container">
+            <div class="legal-content">
+                <!-- PASTE THE "Politique de Confidentialité" CONTENT HERE -->
+                <h1>Politique de Confidentialité</h1>
+                <p><strong>Dernière mise à jour :</strong> 24 août 2025</p>
+
+                <h3>1. Introduction</h3>
+                <p>Bienvenue sur Bloom. Nous nous engageons à protéger la vie privée de nos clients. Cette politique de confidentialité explique quelles informations nous collectons, comment nous les utilisons et les droits que vous avez sur vos données personnelles, conformément à la loi n° 18-07 relative à la protection des personnes physiques dans le traitement des données à caractère personnel.</p>
+
+                <h3>2. Données que nous collectons</h3>
+                <p>Nous collectons les informations suivantes :</p>
+                <ul>
+                    <li><strong>Informations d'identification :</strong> Nom, prénom, adresse e-mail, numéro de téléphone.</li>
+                    <li><strong>Informations de livraison :</strong> Adresse complète, wilaya, commune.</li>
+                    <li><strong>Informations de connexion :</strong> Mot de passe (chiffré), informations sur le compte utilisateur.</li>
+                    <li><strong>Données de navigation :</strong> Adresse IP, type de navigateur, pages visitées (collectées de manière anonyme pour améliorer votre expérience).</li>
+                </ul>
+
+                <h3>3. Comment nous utilisons vos données</h3>
+                <p>Vos données sont utilisées pour :</p>
+                <ul>
+                    <li><strong>Traiter vos commandes :</strong> Gérer le paiement (à la livraison), la préparation et l'expédition de vos produits.</li>
+                    <li><strong>Gérer votre compte :</strong> Vous permettre de vous connecter, de consulter votre historique de commandes et de gérer votre wishlist.</li>
+                    <li><strong>Communiquer avec vous :</strong> Vous envoyer des confirmations de commande, des notifications d'expédition et répondre à vos questions via le formulaire de contact.</li>
+                    <li><strong>Améliorer notre service :</strong> Analyser les tendances de navigation pour optimiser notre site web.</li>
+                </ul>
+
+                <h3>4. Partage des données</h3>
+                <p>Nous ne vendons, ne louons et ne partageons pas vos données personnelles avec des tiers à des fins marketing. Vos informations de livraison (nom, adresse, téléphone) sont partagées uniquement avec nos partenaires de livraison dans le seul but d'acheminer votre commande.</p>
+
+                <h3>5. Sécurité de vos données</h3>
+                <p>Nous prenons la sécurité de vos données très au sérieux. Nous utilisons des mesures techniques comme le chiffrement des mots de passe et des protocoles de sécurité (Helmet.js) pour protéger vos informations contre l'accès non autorisé, la modification ou la divulgation.</p>
+
+                <h3>6. Vos droits</h3>
+                <p>Conformément à la loi, vous disposez des droits suivants :</p>
+                <ul>
+                    <li><strong>Droit d'accès :</strong> Vous pouvez demander à voir les informations que nous détenons sur vous.</li>
+                    <li><strong>Droit de rectification :</strong> Vous pouvez corriger toute information incorrecte dans votre espace "Mon Compte".</li>
+                    <li><strong>Droit à l'oubli :</strong> Vous pouvez demander la suppression de votre compte et de vos données personnelles.</li>
+                </ul>
+                <p>Pour exercer ces droits, veuillez nous contacter via notre page de contact.</p>
+
+                <h3>7. Cookies</h3>
+                <p>Notre site utilise des cookies essentiels pour fonctionner (panier, session utilisateur) et des cookies de consentement. Un bandeau vous informe de leur utilisation lors de votre première visite. Pour plus de détails, veuillez consulter notre mécanisme de gestion des cookies.</p>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+    <%- include('partials/modals') %> 
+
+
+
+</body>
+</html>

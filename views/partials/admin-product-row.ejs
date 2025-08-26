@@ -1,0 +1,16 @@
+<tr>
+    <!-- CHANGED: Added leading slash to the image path -->
+    <td><img src="<%= item.image %>" alt="<%= item.name %>" class="list-img"></td>
+    <td class="name-cell"><%= item.name %></td>
+    <td><span class="list-product-type"><%= item.type %></span></td>
+    <td><%= item.price.toFixed(2) %> DA</td>
+    <td>
+        <div class="admin-list-actions">
+            <a href="<%= item.editUrl %>" class="admin-btn-list-action admin-btn-list-edit">Modifier</a>
+            <form action="<%= item.deleteUrl %>" method="POST">
+               
+                <button type="button" class="admin-btn-list-action admin-btn-list-delete btn-delete" data-item-name="<%= item.name %>">Supprimer</button>
+            </form>
+        </div>
+    </td>
+</tr>

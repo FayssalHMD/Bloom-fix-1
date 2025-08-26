@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom - Douce au naturelle</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+
+
+    <!-- ================================================== -->
+    <!--        START: ADD SWIPERJS LIBRARY (CSS & JS)      -->
+    <!-- ================================================== -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- ================================================== -->
+    <!--         END: ADD SWIPERJS LIBRARY (CSS & JS)       -->
+    <!-- ================================================== -->
+
+</head>
+<body class="no-scroll">
+
+    <%- include('partials/header') %>
+
+    <main>
+        <!-- ================================================== -->
+        <!--         HERO SECTION (Unchanged)                   -->
+        <!-- ================================================== -->
+        <section class="hero-section" id="hero-section" role="img" aria-label="Flacon d'huile Bloom posé devant un vase de fleurs">
+            <div class="hero-content">
+                <h1 class="hero-title">Douce au Naturelle.</h1>
+                <p class="hero-text">Découvrez le pouvoir doux de la nature. Notre huile exclusive nourrit votre peau, la laissant douce, radieuse et magnifiquement nette.</p>
+                <a href="#nos-produits" class="btn-hero">Découvrir nos produits</a>
+            </div>
+        </section>
+
+        <!-- ================================================== -->
+        <!--     NEW & IMPROVED COMMITMENT SECTION              -->
+        <!-- ================================================== -->
+        <section class="commitment-section" id="commitment-section">
+            <div class="commitment-container">
+                <div class="commitment-image">
+                    <img src="/images/promise02-image.png" alt="Visible results on skin texture">
+                </div>
+                <div class="commitment-text">
+                    <h2 class="commitment-title">Une certitude, pas une promesse.</h2>
+                    <p class="commitment-paragraph">
+                        Chez Bloom, l'efficacité est notre certitude. Attendez-vous à des résultats rapides, visibles dès les premières utilisations, et surtout durables. Plus de 1000 clientes satisfaites ont déjà fait confiance à notre expertise.
+                    </p>
+                    <p class="commitment-conclusion">
+                        Si vous cherchez le meilleur, vous êtes au bon endroit.
+                        <br>
+                        أفضل منتوجات بشرة في جزائر سعر جودة و كمية ❤️
+                    </p>
+                </div>
+            </div>
+        </section>
+
+      <!-- ================================================== -->
+<!--       PRODUCTS SECTION ("Nos Incontournables")     -->
+<!-- ================================================== -->
+<section class="product-showcase-section" id="nos-produits">
+    <div class="showcase-container">
+        <h2 class="showcase-title">Nos Incontournables</h2>
+        
+        <!-- START: SWIPER STRUCTURE FOR PRODUCTS -->
+        <div class="swiper product-carousel">
+            <div class="swiper-wrapper">
+                <% if (products && products.length > 0) { %>
+                    <% products.forEach(product => { %>
+                        <!-- Each card is now a swiper-slide -->
+                        <div class="swiper-slide">
+                            <article class="product-card">
+                                <button class="wishlist-btn <%= (locals.userDetails && locals.userDetails.wishlist.some(item => item.productId && item.productId.toString() === product._id.toString())) ? 'active' : '' %>" aria-label="Ajouter à la wishlist" data-item-id="<%= product._id %>" data-item-type="Product">
+                                    <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                                </button>
+                                <div class="product-image-wrapper">
+                                    <img src="<%= product.mainImage || (product.gallery && product.gallery[0]) || '/images/placeholder.png' %>" alt="<%= product.name %>" class="product-image">
+                                </div>
+                                <div class="product-card-content">
+                                    <h3><%= product.name %></h3>
+                                    <p class="product-description"><%= product.short_description %></p>
+                                    <span class="product-price"><%= product.price %> DA</span>
+                                    <a href="/produit/<%= product.id %>" class="product-btn">Voir les détails</a>
+                                </div>
+                            </article>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>Aucun produit à afficher pour le moment.</p>
+                <% } %>
+            </div>
+            <!-- Add Navigation -->
+            <div class="swiper-button-prev product-swiper-prev"></div>
+            <div class="swiper-button-next product-swiper-next"></div>
+        </div>
+        <!-- END: SWIPER STRUCTURE FOR PRODUCTS -->
+
+
+        <!-- ================= ADD THIS LINK ================= -->
+        <a href="/boutique" class="view-all-link">Voir tous les produits →</a>
+        <!-- ================================================= -->
+    </div>
+</section>
+
+      <!-- ================================================== -->
+<!--         PACKS SECTION ("Nos Offres Exclusives")      -->
+<!-- ================================================== -->
+<section class="packs-section" id="packs">
+    <div class="showcase-container">
+        <h2 class="showcase-title">Nos Offres Exclusives</h2>
+        
+        <!-- START: SWIPER STRUCTURE FOR PACKS -->
+        <div class="swiper packs-carousel">
+            <div class="swiper-wrapper">
+                <% if (packs && packs.length > 0) { %>
+                    <% packs.forEach(pack => { %>
+                        <!-- Each card is now a swiper-slide -->
+                        <div class="swiper-slide">
+                            <article class="pack-card">
+                                <button class="wishlist-btn <%= (locals.userDetails && locals.userDetails.wishlist.some(item => item.packId && item.packId.toString() === pack._id.toString())) ? 'active' : '' %>" aria-label="Ajouter à la wishlist" data-item-id="<%= pack._id %>" data-item-type="Pack">
+                                    <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                                </button>
+                                <div class="pack-badge"><%= pack.savingsText %></div>
+                                <div class="product-image-wrapper">
+                                    <img src="<%= pack.mainImage || pack.imageSrc %>" alt="<%= pack.name %>" class="product-image">
+                                </div>
+                                <div class="pack-card-content">
+                                    <h3><%= pack.name %></h3>
+                                    <p class="pack-contents"><%= pack.contents %></p>
+                                    <div class="pack-pricing">
+                                        <span class="original-price"><%= pack.originalPrice %> DA</span>
+                                        <span class="discounted-price"><%= pack.discountedPrice %> DA</span>
+                                    </div>
+                                    <a href="/packs/<%= pack.id %>" class="product-btn">Voir les détails</a>
+                                </div>
+                            </article>
+                        </div>
+                    <% }) %>
+                <% } %>
+            </div>
+            <!-- Add Navigation -->
+            <div class="swiper-button-prev packs-swiper-prev"></div>
+            <div class="swiper-button-next packs-swiper-next"></div>
+        </div>
+        <!-- END: SWIPER STRUCTURE FOR PACKS -->
+
+         <!-- ================= ADD THIS LINK ================= -->
+         <a href="/boutique#packs-section" class="view-all-link">Voir tous les packs →</a>
+         <!-- ================================================= -->
+
+    </div>
+</section>
+
+        <!-- ================================================== -->
+        <!--   NEW "LIVRAISON & PAIEMENT" SECTION               -->
+        <!-- ================================================== -->
+        <section class="delivery-info-section">
+            <div class="delivery-info-container">
+                <div class="info-box">
+                    <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+                    <h3>Comment Commander</h3>
+                    <p>Choisissez vos produits, finalisez votre commande, et laissez-nous nous occuper du reste. C'est simple et rapide.</p>
+                </div>
+                <div class="info-box">
+                    <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+                    <h3>Paiement à la Livraison</h3>
+                    <p>Payez en toute sécurité en espèces directement au livreur lorsque vous recevez votre colis.</p>
+                </div>
+                <div class="info-box">
+                    <div class="info-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+                    <h3>Livraison 58 Wilayas</h3>
+                    <p>Nous livrons à votre domicile ou en point relais (Stop Desk) partout en Algérie.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================== -->
+        <!--       TESTIMONIALS SECTION (RESTORED)             -->
+        <!-- ================================================== -->
+        <section class="testimonials-section">
+            <h2 class="showcase-title">Ce qu'en disent nos clientes.</h2>
+            <div class="perspective-carousel">
+                <button class="carousel-nav prev-btn" aria-label="Témoignage précédent"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="15 6 9 12 15 18" /></svg></button>
+                <div class="carousel-cards">
+                    <div class="testimonial-card"><div class="stars" aria-label="5 sur 5 étoiles"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg></div><p class="testimonial-text">"J'ai la peau très sensible et l'huile Bloom est la seule chose qui a calmé mes rougeurs. Ma peau est tellement plus douce et lumineuse. C'est magique !"</p><footer class="customer-name">- Inès B.</footer></div>
+                    <div class="testimonial-card"><div class="stars" aria-label="5 sur 5 étoiles"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg></div><p class="testimonial-text">"Absolument conquise ! L'odeur est subtile et agréable, et la texture pénètre rapidement sans laisser de film gras. Je recommande à 100%."</p><footer class="customer-name">- Sarah L.</footer></div>
+                    <div class="testimonial-card"><div class="stars" aria-label="4 sur 5 étoiles"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg></div><p class="testimonial-text">"Très bon produit, j'ai vu une différence sur mes cicatrices d'acné après quelques semaines. La livraison a été rapide. Le flacon est aussi très joli."</p><footer class="customer-name">- Fatima Z.</footer></div>
+                    <div class="testimonial-card"><div class="stars" aria-label="5 sur 5 étoiles"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg><svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/></svg></div><p class="testimonial-text">"Ce produit est devenu un indispensable dans ma routine du soir. Il hydrate parfaitement ma peau mixte sans la graisser. Un vrai coup de cœur."</p><footer class="customer-name">- Amira K.</footer></div>
+                </div>
+                <button class="carousel-nav next-btn" aria-label="Témoignage suivant"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 6 15 12 9 18" /></svg></button>
+            </div>
+        </section>
+
+        <!-- ================================================== -->
+        <!--         FINAL CTA SECTION (Unchanged)              -->
+        <!-- ================================================== -->
+        <section class="final-invitation-section">
+            <div class="invitation-card">
+                <img src="/images/CTA-image.png" alt="Texture de sérum Bloom sur la peau" class="invitation-image">
+                <h2 class="invitation-headline">Prête à révéler votre éclat ?</h2>
+                <p class="invitation-text">Votre voyage vers une peau lumineuse commence ici.</p>
+                <a href="#nos-produits" class="invitation-btn">Explorer la Collection</a>
+            </div>
+        </section>
+     </main>
+
+     <%- include('partials/footer') %>
+     <%- include('partials/modals') %>
+ 
+</body>
+</html>

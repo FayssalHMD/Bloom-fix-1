@@ -1,0 +1,28 @@
+[
+  {
+    "id": "duo-eclat-hydratation",
+    "name": "Duo Éclat & Hydratation",
+    "contents": "Huile Éclat Radieux & Brume Pétale Hydratante", 
+    "imageSrc": "/images/produit1.jpg",
+    "originalPrice": "127.00",
+    "discountedPrice": "105.00",
+    "savingsText": "Économisez 22€",
+    "description": "L'alliance parfaite pour une peau qui respire la santé. Notre Huile Éclat Radieux nourrit en profondeur et illumine le teint, tandis que la Brume Pétale Hydratante offre une vague de fraîcheur et d'hydratation instantanée. Ensemble, ils créent une base parfaite pour une peau douce, souple et visiblement plus lumineuse.",
+    "benefits": [
+      "Hydratation intense et durable.",
+      "Amélioration de l'éclat naturel du teint.",
+      "Apaisement des peaux sensibles et irritées.",
+      "Base parfaite pour le maquillage."
+    ],
+    "includedProducts": [
+      {
+        "name": "Huile Éclat Radieux",
+        "image": "/images/produit1.jpg"
+      },
+      {
+        "name": "Brume Pétale Hydratante",
+        "image": "/images/produit2.jpg"
+      }
+    ]
+  }
+]

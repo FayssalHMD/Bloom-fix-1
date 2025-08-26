@@ -1,0 +1,112 @@
+:root {
+    --star-color: #ffc700;
+}
+
+.reviews-page-main {
+    padding: 4rem 2rem;
+    background-color: var(--background-color);
+}
+
+.reviews-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.reviews-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.reviews-header h1 {
+    font-size: clamp(2.5rem, 5vw, 3.2rem);
+    margin-bottom: 0.5rem;
+}
+
+.reviews-header p {
+    font-size: 1.1rem;
+    opacity: 0.8;
+    max-width: 60ch;
+    margin: 0 auto;
+}
+
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.review-card {
+    background-color: var(--section-bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark-mode .review-card {
+    background-color: var(--section-bg-dark);
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+}
+
+.review-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.review-author strong {
+    font-weight: 700;
+}
+
+.star-rating-cell .star {
+    font-size: 1rem;
+    color: var(--border-color);
+}
+
+.star-rating-cell .star.filled {
+    color: var(--star-color);
+}
+
+.review-comment {
+    font-size: 1rem;
+    line-height: 1.6;
+    flex-grow: 1;
+    margin-bottom: 1rem;
+    font-style: italic;
+    opacity: 0.9;
+}
+
+.review-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.review-product-link {
+    font-weight: 600; /* Bolder */
+    text-decoration: none;
+    color: var(--accent-color);
+    opacity: 0.9; /* More opaque */
+    transition: opacity 0.2s ease;
+}
+
+.review-product-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.review-product-link:hover {
+    text-decoration: underline;
+}
