@@ -1,0 +1,74 @@
+<!-- views/faq.ejs -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %></title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/faq.css"> <!-- We will create this file next -->
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="faq-page">
+        <section class="faq-hero">
+            <div class="faq-container">
+                <h1>Une question ? Nous sommes là pour vous aider.</h1>
+                <div class="faq-search-wrapper">
+                    <input type="text" id="faq-search-input" placeholder="Rechercher une question...">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq-content-section">
+            <div class="faq-container">
+                <% if(categories && categories.length > 0) { %>
+                    <div class="faq-categories">
+                        <button class="category-tab active" data-category="all">Toutes</button>
+                        <% categories.forEach(category => { %>
+                            <button class="category-tab" data-category="<%= category.name.toLowerCase().replace(/\s+/g, '-') %>"><%= category.name %></button>
+                        <% }) %>
+                    </div>
+                <% } %>
+
+                <div class="faq-accordion">
+                    <% if(faqItems && faqItems.length > 0) { %>
+                        <% faqItems.forEach(item => { %>
+                            <div class="faq-item" data-category="<%= item.category.name.toLowerCase().replace(/\s+/g, '-') %>">
+                                <button class="faq-question">
+                                    <span><%= item.question %></span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p><%= item.answer %></p>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p class="faq-empty-message">Aucune question n'a été ajoutée pour le moment.</p>
+                    <% } %>
+                    <div id="faq-no-results" class="faq-empty-message" style="display: none;">
+                        <h3>Aucun résultat</h3>
+                        <p>Nous n'avons trouvé aucune question correspondant à votre recherche.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq-cta-section">
+            <div class="faq-container">
+                <div class="cta-box">
+                    <h3>Vous ne trouvez pas de réponse ?</h3>
+                    <p>Notre équipe est prête à vous aider. Contactez-nous directement pour toute question.</p>
+                    <a href="/contact" class="btn-primary">Nous Contacter</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

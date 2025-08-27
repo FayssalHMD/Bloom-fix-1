@@ -285,3 +285,88 @@
 .dark-mode .composer-panel select:focus {
     box-shadow: 0 0 0 3px rgba(217, 184, 180, 0.2);
 }
+
+
+/* ================================================== */
+/*         FULLY CUSTOM SELECT DROPDOWN V2            */
+/* ================================================== */
+
+.custom-select-wrapper {
+    position: relative;
+}
+
+.custom-select-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.custom-select-display svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+
+/* This is the actual <select> element, made invisible but functional */
+.custom-select-wrapper select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Focus and Hover States */
+.custom-select-wrapper:hover .custom-select-display {
+    border-color: var(--accent-color);
+}
+
+.custom-select-wrapper select:focus + .custom-select-display {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px var(--ghost-number-light);
+}
+
+.dark-mode .custom-select-wrapper select:focus + .custom-select-display {
+    box-shadow: 0 0 0 3px rgba(217, 184, 180, 0.1);
+}
+
+/* Dark Mode SVG Color */
+.dark-mode .custom-select-display svg {
+    fill: var(--dark-theme-text);
+}
+
+
+/* ================================================== */
+/*         CUSTOM FORM VALIDATION FEEDBACK            */
+/* ================================================== */
+
+.form-group.error input,
+.form-group.error textarea,
+.form-group.error .custom-select-display { /* Target our new custom select */
+    border-color: #e74c3c;
+    animation: shake-horizontal 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.form-group.error label {
+    color: #c0392b;
+}
+
+.dark-mode .form-group.error label {
+    color: #E57373;
+}
+
+@keyframes shake-horizontal {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70% { transform: translateX(-6px); }
+  20%, 40%, 60%, 80% { transform: translateX(6px); }
+}

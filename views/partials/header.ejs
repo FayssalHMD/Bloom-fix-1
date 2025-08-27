@@ -10,13 +10,23 @@
             <img src="/images/bloom-logo.png" alt="Bloom Home" class="navigation-logo">
         </a>
 
-        <ul class="nav-menu desktop-only">
-            <li><a href="/" class="nav-link">Accueil</a></li>
-            <li><a href="/#nos-produits" class="nav-link">Produits</a></li>
-            <li><a href="/#packs" class="nav-link">Packs</a></li>
-            <li><a href="/resultats" class="nav-link">Nos Résultats</a></li>
-            <li><a href="/contact" class="nav-link">Contact</a></li>
-        </ul>
+       <ul class="nav-menu desktop-only">
+    <% if (pageType === 'admin') { %>
+        <li><a href="/admin/dashboard" class="nav-link">Tableau de Bord</a></li>
+        <li><a href="/admin/products" class="nav-link">Inventaire</a></li>
+        <li><a href="/admin/faq" class="nav-link">FAQ</a></li>
+        <li><a href="/admin/testimonials" class="nav-link">Témoignages</a></li>
+        <li><a href="/admin/reviews" class="nav-link">Avis</a></li>
+        <li><a href="/admin/messages" class="nav-link">Messages</a></li>
+    <% } else { %>
+        <li><a href="/" class="nav-link">Accueil</a></li>
+        <li><a href="/#nos-produits" class="nav-link">Produits</a></li>
+        <li><a href="/#packs" class="nav-link">Packs</a></li>
+        <li><a href="/resultats" class="nav-link">Nos Résultats</a></li>
+        <li><a href="/faq" class="nav-link">FAQ</a></li>
+        <li><a href="/contact" class="nav-link">Contact</a></li>
+    <% } %>
+</ul>
 
         <div class="nav-actions">
              <button id="theme-toggle-btn" class="nav-icon-btn" aria-label="Toggle theme">
@@ -60,6 +70,7 @@
                 <li><a href="/#nos-produits" class="mobile-nav-link">Produits</a></li>
                 <li><a href="/#packs" class="mobile-nav-link">Packs</a></li>
                 <li><a href="/resultats" class="mobile-nav-link">Nos Résultats</a></li>
+                <li><a href="/faq" class="mobile-nav-link">FAQ</a></li>
                 <li><a href="/contact" class="mobile-nav-link">Contact</a></li>
             </ul>
             <hr class="mobile-nav-divider">

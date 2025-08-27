@@ -260,3 +260,91 @@
     .admin-header-actions { flex-direction: column; width: 100%; }
     .admin-header-actions .admin-btn, .admin-header-actions .nav-link { width: 100%; text-align: center; }
 }
+
+
+
+/* Append this to public/styles/admin.css */
+
+/* ================================================== */
+/*            ADMIN FAQ MANAGEMENT STYLES             */
+/* ================================================== */
+
+.admin-faq-layout {
+    display: grid;
+    grid-template-columns: 350px 1fr; /* Fixed width for categories, flexible for questions */
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.admin-category-form {
+    margin-bottom: 1.5rem;
+}
+
+.form-divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 2rem 0;
+}
+
+.category-list-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: var(--section-bg-light);
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.dark-mode .category-item {
+    background-color: var(--section-bg-dark);
+}
+
+.category-item:hover {
+    border-color: var(--accent-color);
+}
+
+.category-item span {
+    font-weight: 600;
+}
+
+.btn-delete-category {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    opacity: 0.5;
+    cursor: pointer;
+    font-size: 1.5rem;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
+
+.btn-delete-category:hover {
+    color: #e74c3c;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.admin-faq-items-container .admin-inventory-list-view {
+    margin-top: 0; /* Remove any top margin if it exists */
+}
+
+/* --- Responsive Adjustments for FAQ Admin --- */
+@media (max-width: 900px) {
+    .admin-faq-layout {
+        grid-template-columns: 1fr; /* Stack columns on smaller screens */
+    }
+}

@@ -1,0 +1,80 @@
+<!-- views/admin-edit-faq.ejs -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %> - Bloom Admin</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+    <link rel="stylesheet" href="/styles/admin-form.css">
+</head>
+<body>
+    <%- include('partials/admin-header') %>
+    <main class="admin-main">
+        <form action="/admin/faq/edit/<%= faqItem._id %>" method="POST" class="admin-form-container wide-form">
+            <div class="admin-form-header">
+                <h1 class="admin-form-title"><%= pageTitle %></h1>
+                <a href="/admin/faq" class="admin-btn-cancel">Annuler</a>
+            </div>
+
+            <% if (errors.length > 0) { %>
+                <div class="form-errors">
+                    <ul>
+                        <% errors.forEach(error => { %>
+                            <li><%= error.msg %></li>
+                        <% }) %>
+                    </ul>
+                </div>
+            <% } %>
+
+            <div class="form-group">
+                <label for="question">Question</label>
+                <input type="text" id="question" name="question" value="<%= oldInput.question || '' %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="answer">Réponse</label>
+                <textarea id="answer" name="answer" rows="8" required><%= oldInput.answer || '' %></textarea>
+            </div>
+
+           <div class="form-group">
+    <label for="category">Catégorie</label>
+    <div class="custom-select-wrapper">
+        <!-- This is the visible, styled element -->
+        <div class="custom-select-display" tabindex="0">
+            <span id="selected-category-name">
+                <% 
+                let selectedCategoryName = '-- Choisir une catégorie --';
+                if (oldInput.category) {
+                    const selectedCat = categories.find(c => c._id.toString() === oldInput.category.toString());
+                    if (selectedCat) {
+                        selectedCategoryName = selectedCat.name;
+                    }
+                }
+                %>
+                <%= selectedCategoryName %>
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>
+        </div>
+        <!-- This is the actual, hidden select input that submits the data -->
+        <select id="category" name="category" required>
+            <option value="" disabled <%= !oldInput.category ? 'selected' : '' %>>-- Choisir une catégorie --</option>
+            <% categories.forEach(cat => { %>
+                <option value="<%= cat._id %>" <%= (oldInput.category && oldInput.category.toString() === cat._id.toString()) ? 'selected' : '' %>>
+                    <%= cat.name %>
+                </option>
+            <% }) %>
+        </select>
+    </div>
+</div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Mettre à jour</button>
+            </div>
+        </form>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>

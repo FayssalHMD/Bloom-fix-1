@@ -163,6 +163,11 @@
         <script src="/functions/admin.js" nonce="<%= nonce %>"></script>
     <% } %>
 
+    <% if (pageType === 'faq') { %> <!-- ADD THIS BLOCK -->
+        <script src="/functions/faq.js" nonce="<%= nonce %>"></script>
+    <% } %>
+
+
 <% } %>
 
 <!-- ================================================== -->

@@ -1,0 +1,99 @@
+<!-- views/admin-faq.ejs (CORRECTED) -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pageTitle %> - Bloom Admin</title>
+    <link rel="icon" type="image/png" href="/images/title-icon.png">
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="/styles/admin.css">
+    <link rel="stylesheet" href="/styles/admin-form.css">
+</head>
+<body>
+    <%- include('partials/admin-header') %>
+    <main class="admin-main">
+        <div class="admin-inventory-header">
+            <h1><%= pageTitle %></h1>
+            <div class="admin-inventory-actions">
+                <a href="/admin/dashboard" class="admin-btn-back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Retour
+                </a>
+                <a href="/admin/faq/add" class="admin-btn admin-btn-primary">+ Ajouter une Question</a>
+            </div>
+        </div>
+
+        <div class="admin-faq-layout">
+            <!-- Column 1: Manage Categories -->
+            <div class="admin-form-container">
+                <h2 class="admin-form-title">Gérer les Catégories</h2>
+                <form action="/admin/faq/categories/add" method="POST" class="admin-category-form" novalidate>
+                    <div class="form-group">
+                        <label for="name">Nom de la nouvelle catégorie</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Ajouter Catégorie</button>
+                </form>
+                <hr class="form-divider">
+                <h3 class="category-list-title">Catégories Existantes</h3>
+                <div class="category-list">
+                    <% if(categories && categories.length > 0) { %>
+                        <% categories.forEach(category => { %>
+                            <div class="category-item">
+                                <span><%= category.name %></span>
+                                <!-- KEY CHANGE: This form now has a specific class for our JS to find -->
+                                <form class="delete-form" action="/admin/faq/categories/delete/<%= category._id %>" method="POST">
+                                    <button type="button" class="btn-delete btn-delete-category" data-item-name="<%= category.name %>">×</button>
+                                </form>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>Aucune catégorie trouvée.</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Column 2: Manage Questions -->
+            <div class="admin-faq-items-container">
+                <div class="admin-inventory-list-view">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Question</th>
+                                <th>Catégorie</th>
+                                <th style="width: 150px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(faqItems && faqItems.length > 0) { %>
+                                <% faqItems.forEach(item => { %>
+                                    <tr>
+                                        <td data-label="Question" class="name-cell"><%= item.question %></td>
+                                        <td data-label="Catégorie"><%= item.category.name %></td>
+                                        <td data-label="Actions">
+                                            <div class="admin-list-actions">
+                                                <a href="/admin/faq/edit/<%= item._id %>" class="admin-btn-list-action admin-btn-list-edit">Modifier</a>
+                                                <!-- KEY CHANGE: This form now has a specific class for our JS to find -->
+                                                <form class="delete-form" action="/admin/faq/delete/<%= item._id %>" method="POST">
+                                                    <button type="button" class="admin-btn-list-action admin-btn-list-delete btn-delete" data-item-name="<%= item.question.replace(/"/g, '&quot;') %>">Supprimer</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="3" style="text-align: center; padding: 2rem;">Aucune question n'a été ajoutée pour le moment.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    <%- include('partials/admin-modals') %>
+    <%- include('partials/footer') %>
+</body>
+</html>

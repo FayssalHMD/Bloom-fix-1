@@ -20,6 +20,9 @@ const Order = require('./models/Order');
 const User = require('./models/User');
 const ContactSubmission = require('./models/ContactSubmission');
 const Testimonial = require('./models/Testimonial');
+const FAQCategory = require('./models/FAQCategory'); // <-- ADD THIS LINE
+const FAQItem = require('./models/FAQItem');         // <-- ADD THIS LINE
+
 const {
   sendNewOrderNotification,
   sendPasswordResetEmail,
@@ -846,6 +849,28 @@ app.get('/resultats', async (req, res) => {
   }
 });
 
+
+app.get('/faq', async (req, res) => {
+    try {
+        const categories = await FAQCategory.find({}).sort({ name: 1 });
+        const faqItems = await FAQItem.find({}).populate('category').sort({ 'category.name': 1, sortOrder: 1 });
+        res.render('faq', {
+            pageTitle: 'Questions Fréquemment Posées - Bloom',
+            pageType: 'faq', // We'll use this for loading specific JS/CSS
+            categories,
+            faqItems
+        });
+    } catch (error) {
+        console.error('Error fetching data for public FAQ page:', error);
+        res.status(500).render('admin-error', {
+            pageType: 'error',
+            message: 'Impossible de charger la page FAQ.'
+        });
+    }
+});
+
+
+
 app.get('/politique-de-confidentialite', (req, res) => {
   res.render('privacy', {
     pageTitle: 'Politique de Confidentialité - Bloom',
@@ -1448,6 +1473,66 @@ app.get('/admin/logout', (req, res) => {
   });
 });
 
+
+app.get('/admin/faq', authMiddleware, async (req, res) => {
+    try {
+        const categories = await FAQCategory.find({}).sort({ name: 1 });
+        const faqItems = await FAQItem.find({}).populate('category').sort({ createdAt: -1 });
+        res.render('admin-faq', {
+            pageTitle: 'Gestion de la FAQ',
+            pageType: 'admin',
+            categories,
+            faqItems
+        });
+    } catch (error) {
+        console.error('Error fetching FAQ data for admin:', error);
+        req.flash('error', 'Impossible de charger la page de gestion de la FAQ.');
+        res.redirect('/admin/dashboard');
+    }
+});
+
+app.get('/admin/faq/add', authMiddleware, async (req, res) => {
+    try {
+        const categories = await FAQCategory.find({}).sort({ name: 1 });
+        res.render('admin-add-faq', {
+            pageTitle: 'Ajouter une Question',
+            pageType: 'admin',
+            categories,
+            errors: [],
+            oldInput: {}
+        });
+    } catch (error) {
+        console.error('Error loading add FAQ page:', error);
+        req.flash('error', 'Impossible de charger le formulaire.');
+        res.redirect('/admin/faq');
+    }
+});
+
+app.get('/admin/faq/edit/:id', authMiddleware, async (req, res) => {
+    try {
+        const faqItem = await FAQItem.findById(req.params.id);
+        if (!faqItem) {
+            req.flash('error', 'Question non trouvée.');
+            return res.redirect('/admin/faq');
+        }
+        const categories = await FAQCategory.find({}).sort({ name: 1 });
+        res.render('admin-edit-faq', {
+            pageTitle: 'Modifier une Question',
+            pageType: 'admin',
+            faqItem,
+            categories,
+            errors: [],
+            oldInput: faqItem
+        });
+    } catch (error) {
+        console.error('Error fetching FAQ item for edit:', error);
+        req.flash('error', 'Impossible de charger le formulaire de modification.');
+        res.redirect('/admin/faq');
+    }
+});
+
+
+
 // ==================================================
 //                 ADMIN POST ROUTES
 // ==================================================
@@ -1965,6 +2050,119 @@ app.post('/admin/order/update-status/:id', authMiddleware, async (req, res) => {
     res.status(500).send('Failed to update order status.');
   }
 });
+
+
+// --- FAQ Category Management ---
+app.post('/admin/faq/categories/add', authMiddleware, [
+    body('name', 'Le nom de la catégorie est requis.').not().isEmpty().trim().escape()
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        req.flash('error', errors.array()[0].msg);
+        return res.redirect('/admin/faq');
+    }
+    try {
+        const existingCategory = await FAQCategory.findOne({ name: req.body.name });
+        if (existingCategory) {
+            req.flash('error', 'Cette catégorie existe déjà.');
+            return res.redirect('/admin/faq');
+        }
+        await new FAQCategory({ name: req.body.name }).save();
+        req.flash('success', 'Catégorie ajoutée avec succès.');
+        res.redirect('/admin/faq');
+    } catch (error) {
+        console.error('Error adding FAQ category:', error);
+        req.flash('error', 'Erreur lors de l\'ajout de la catégorie.');
+        res.redirect('/admin/faq');
+    }
+});
+
+app.post('/admin/faq/categories/delete/:id', authMiddleware, async (req, res) => {
+    try {
+        const categoryId = req.params.id;
+        // Prevent deletion if questions are using this category
+        const itemsInCategory = await FAQItem.countDocuments({ category: categoryId });
+        if (itemsInCategory > 0) {
+            req.flash('error', 'Impossible de supprimer une catégorie contenant des questions. Veuillez d\'abord supprimer ou déplacer les questions.');
+            return res.redirect('/admin/faq');
+        }
+        await FAQCategory.findByIdAndDelete(categoryId);
+        req.flash('success', 'Catégorie supprimée avec succès.');
+        res.redirect('/admin/faq');
+    } catch (error) {
+        console.error('Error deleting FAQ category:', error);
+        req.flash('error', 'Erreur lors de la suppression de la catégorie.');
+        res.redirect('/admin/faq');
+    }
+});
+
+// --- FAQ Item Management ---
+const faqItemValidationRules = [
+    body('question', 'La question est requise.').not().isEmpty().trim().escape(),
+    body('answer', 'La réponse est requise.').not().isEmpty().trim().escape(),
+    body('category', 'Veuillez sélectionner une catégorie.').isMongoId()
+];
+
+app.post('/admin/faq/add', authMiddleware, faqItemValidationRules, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const categories = await FAQCategory.find({}).sort({ name: 1 });
+        return res.status(400).render('admin-add-faq', {
+            pageTitle: 'Ajouter une Question',
+            pageType: 'admin',
+            categories,
+            errors: errors.array(),
+            oldInput: req.body
+        });
+    }
+    try {
+        await new FAQItem(req.body).save();
+        req.flash('success', 'Question ajoutée avec succès.');
+        res.redirect('/admin/faq');
+    } catch (error) {
+        console.error('Error adding FAQ item:', error);
+        req.flash('error', 'Erreur lors de l\'ajout de la question.');
+        res.redirect('/admin/faq');
+    }
+});
+
+app.post('/admin/faq/edit/:id', authMiddleware, faqItemValidationRules, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const categories = await FAQCategory.find({}).sort({ name: 1 });
+        const faqItem = { _id: req.params.id, ...req.body }; // Reconstruct item for form repopulation
+        return res.status(400).render('admin-edit-faq', {
+            pageTitle: 'Modifier une Question',
+            pageType: 'admin',
+            categories,
+            faqItem,
+            errors: errors.array(),
+            oldInput: req.body
+        });
+    }
+    try {
+        await FAQItem.findByIdAndUpdate(req.params.id, req.body);
+        req.flash('success', 'Question mise à jour avec succès.');
+        res.redirect('/admin/faq');
+    } catch (error) {
+        console.error('Error updating FAQ item:', error);
+        req.flash('error', 'Erreur lors de la mise à jour de la question.');
+        res.redirect('/admin/faq');
+    }
+});
+
+app.post('/admin/faq/delete/:id', authMiddleware, async (req, res) => {
+    try {
+        await FAQItem.findByIdAndDelete(req.params.id);
+        req.flash('success', 'Question supprimée avec succès.');
+        res.redirect('/admin/faq');
+    } catch (error) {
+        console.error('Error deleting FAQ item:', error);
+        req.flash('error', 'Erreur lors de la suppression de la question.');
+        res.redirect('/admin/faq');
+    }
+});
+
 
 // ==================================================
 //                 ERROR HANDLING

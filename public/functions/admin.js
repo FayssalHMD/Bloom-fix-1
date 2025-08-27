@@ -1,14 +1,12 @@
+// public/functions/admin.js (CORRECTED AND REFACTORED)
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Order Row Expansion ---
     const orderRows = document.querySelectorAll('.admin-order-row');
     orderRows.forEach(row => {
-        // Exclude the details section from being a trigger
         const clickableArea = Array.from(row.children).filter(child => !child.classList.contains('admin-order-details'));
-        
         clickableArea.forEach(area => {
             area.addEventListener('click', (e) => {
-                // Do not expand if a link, button, or form element inside the details was clicked
                 if (e.target.closest('a, button, select, form')) return;
                 row.classList.toggle('is-expanded');
             });
@@ -55,53 +53,58 @@ document.addEventListener('DOMContentLoaded', () => {
         const cancelBtn = document.getElementById('admin-cancel-delete-btn');
         const itemNameSpan = document.getElementById('admin-item-name-to-delete');
         const confirmDeleteForm = document.getElementById('admin-confirm-delete-form');
-        
-        let actionToConfirm = null; // This will hold the function to run on confirm
 
         const openModal = (itemName, onConfirm) => {
-            itemNameSpan.innerHTML = itemName; // Use innerHTML to render <strong> tags
-            actionToConfirm = onConfirm;
+            itemNameSpan.innerHTML = itemName;
             modal.classList.add('active');
+
+            // This is a cleaner way to handle the confirmation
+            const handleConfirm = () => {
+                onConfirm();
+                closeModal(); // Close modal after action
+            };
+            
+            confirmBtn.addEventListener('click', handleConfirm, { once: true });
+            
+            // Ensure cancel also removes the confirm listener
+            const handleCancel = () => {
+                closeModal();
+                confirmBtn.removeEventListener('click', handleConfirm);
+            };
+
+            cancelBtn.addEventListener('click', handleCancel, { once: true });
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) handleCancel();
+            }, { once: true });
         };
 
         const closeModal = () => {
             modal.classList.remove('active');
-            actionToConfirm = null;
         };
 
-        confirmBtn.addEventListener('click', () => {
-            if (typeof actionToConfirm === 'function') {
-                actionToConfirm();
-            }
-        });
-
-        cancelBtn.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
-
-        // Event listener for all delete buttons
+        // SINGLE, UNIFIED Event listener for all delete buttons on the page
         document.body.addEventListener('click', (e) => {
-            // Case 1: Product/Pack deletion (uses a form)
-            const productDeleteBtn = e.target.closest('.btn-delete');
-            if (productDeleteBtn) {
-                e.preventDefault();
-                const form = productDeleteBtn.closest('form');
-                const itemName = productDeleteBtn.dataset.itemName;
+            const targetButton = e.target.closest('.btn-delete, .btn-delete-message, .btn-delete-review');
+            if (!targetButton) return;
+
+            e.preventDefault();
+
+            // Case 1: Generic Form-based Deletion (Products, Packs, FAQ Items, FAQ Categories)
+            if (targetButton.classList.contains('btn-delete')) {
+                const form = targetButton.closest('form');
+                const itemName = targetButton.dataset.itemName || 'cet élément';
                 const deleteUrl = form.action;
 
                 openModal(`<strong>${itemName}</strong>`, () => {
+                    // The modal's own form is used to submit the request
                     confirmDeleteForm.action = deleteUrl;
                     confirmDeleteForm.submit();
                 });
-                return; // Stop further execution
             }
-
+            
             // Case 2: Message deletion (uses Fetch API)
-            const messageDeleteBtn = e.target.closest('.btn-delete-message');
-            if (messageDeleteBtn) {
-                e.preventDefault();
-                const row = messageDeleteBtn.closest('.admin-message-row');
+            else if (targetButton.classList.contains('btn-delete-message')) {
+                const row = targetButton.closest('.admin-message-row');
                 const messageId = row.dataset.messageId;
                 const authorName = row.querySelector('.message-from').textContent;
                 
@@ -114,16 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             setTimeout(() => row.remove(), 300);
                         } else { alert('Erreur: Impossible de supprimer le message.'); }
                     } catch (error) { alert('Une erreur de connexion est survenue.'); }
-                    closeModal();
                 });
-                return;
             }
 
             // Case 3: Review deletion (uses Fetch API)
-            const reviewDeleteBtn = e.target.closest('.btn-delete-review');
-            if (reviewDeleteBtn) {
-                e.preventDefault();
-                const row = reviewDeleteBtn.closest('tr');
+            else if (targetButton.classList.contains('btn-delete-review')) {
+                const row = targetButton.closest('tr');
                 const productId = row.dataset.productId;
                 const reviewId = row.dataset.reviewId;
                 const authorName = row.querySelector('strong')?.textContent || 'cet avis';
@@ -138,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             setTimeout(() => row.remove(), 300);
                         } else { alert('Erreur: ' + result.message); }
                     } catch (error) { alert('Une erreur de connexion est survenue.'); }
-                    closeModal();
                 });
             }
         });
@@ -148,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const messagesContainer = document.querySelector('.admin-messages-list');
     if (messagesContainer) {
         messagesContainer.addEventListener('click', (e) => {
-            // Only expand if the click was not on the delete button
             if (!e.target.closest('.btn-delete-message')) {
                 const row = e.target.closest('.admin-message-row');
                 if (row) {
@@ -170,9 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-
-// --- Flash Message Close Button Logic ---
+    // --- Flash Message Close Button Logic ---
     const flashCloseButtons = document.querySelectorAll('.flash-close-btn');
     flashCloseButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -183,5 +178,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- Custom Select Dropdown Logic ---
+    const customSelects = document.querySelectorAll('.custom-select-wrapper');
+    customSelects.forEach(wrapper => {
+        const select = wrapper.querySelector('select');
+        const displayName = wrapper.querySelector('#selected-category-name');
+        if (select && displayName) {
+            select.addEventListener('change', () => {
+                const selectedOption = select.options[select.selectedIndex];
+                displayName.textContent = selectedOption.textContent;
+            });
+        }
+    });
 
+    // --- Custom Form Validation for FAQ Forms ---
+    const faqForms = document.querySelectorAll('form[action*="/admin/faq/"]');
+    faqForms.forEach(faqForm => {
+        if (faqForm.method.toUpperCase() === 'POST' && !faqForm.classList.contains('delete-form')) {
+            faqForm.setAttribute('novalidate', true);
+            faqForm.addEventListener('submit', (e) => {
+                let isValid = true;
+                const fieldsToValidate = faqForm.querySelectorAll('[required]');
+                fieldsToValidate.forEach(field => {
+                    field.closest('.form-group').classList.remove('error');
+                });
+                fieldsToValidate.forEach(field => {
+                    if (!field.value) {
+                        isValid = false;
+                        const formGroup = field.closest('.form-group');
+                        if (formGroup) {
+                            formGroup.classList.add('error');
+                        }
+                    }
+                });
+                if (!isValid) {
+                    e.preventDefault();
+                    console.log('Validation failed. Please fill all required fields.');
+                }
+            });
+        }
+    });
 });
