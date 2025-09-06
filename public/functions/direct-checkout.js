@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let shippingData = [];
     let currentItem = null;
-
+    let finalShippingCost = 0; // <-- ADD THIS LINE
     const fetchShippingData = async () => {
         try {
             const response = await fetch('/api/shipping-info');
@@ -82,25 +82,54 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateTotalPrice = () => {
-        if (!currentItem || !totalPriceEl || !wilayaSelect) return;
-        
-        const quantity = parseInt(document.getElementById('quantity-display')?.textContent || '1', 10);
-        const selectedWilayaName = wilayaSelect.value;
-        const selectedWilaya = shippingData.find(w => w.name === selectedWilayaName);
-        const selectedMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
+    if (!currentItem || !totalPriceEl || !wilayaSelect) return;
 
-        const itemPrice = parseFloat(currentItem.price);
-        let shippingCost = 0;
-        if (selectedWilaya) {
-            shippingCost = selectedMethod === 'stopdesk' && selectedWilaya.hasStopdesk 
-                ? parseFloat(selectedWilaya.stopdeskPrice) 
-                : parseFloat(selectedWilaya.homePrice);
+    const quantity = parseInt(document.getElementById('quantity-display')?.textContent || '1', 10);
+    const subtotal = parseFloat(currentItem.price) * quantity;
+    
+    const selectedWilayaName = wilayaSelect.value;
+    const selectedWilaya = shippingData.find(w => w.name === selectedWilayaName);
+    const selectedMethod = document.querySelector('input[name="deliveryMethod"]:checked').value;
+
+    let originalShippingCost = 0;
+    if (selectedWilaya) {
+        originalShippingCost = selectedMethod === 'stopdesk' && selectedWilaya.hasStopdesk 
+            ? parseFloat(selectedWilaya.stopdeskPrice) 
+            : parseFloat(selectedWilaya.homePrice);
+    }
+
+    // --- START: NEW DISCOUNT LOGIC ---
+    if (subtotal > 10000) {
+        finalShippingCost = 0;
+    } else if (subtotal > 7900) {
+        if (selectedMethod === 'stopdesk') {
+            finalShippingCost = 0;
+        } else { // home delivery
+            finalShippingCost = Math.max(0, originalShippingCost - 400);
         }
-        
-        const total = (itemPrice * quantity) + shippingCost;
-        
-        totalPriceEl.textContent = `${total.toFixed(2).replace('.', ',')} DA`;
-    };
+    } else {
+        finalShippingCost = originalShippingCost;
+    }
+    // --- END: NEW DISCOUNT LOGIC ---
+
+    const total = subtotal + finalShippingCost;
+    
+    // --- START: NEW UI UPDATE LOGIC ---
+    const originalPriceEl = document.getElementById('drawer-original-shipping-price');
+    
+    if (selectedWilaya && finalShippingCost < originalShippingCost) {
+        // A discount is applied, show the original total with a strikethrough
+        const originalTotal = subtotal + originalShippingCost;
+        originalPriceEl.textContent = `${originalTotal.toFixed(2).replace('.', ',')} DA`;
+        originalPriceEl.style.display = 'inline';
+    } else {
+        // No discount, hide the original price element
+        originalPriceEl.style.display = 'none';
+    }
+    
+    totalPriceEl.textContent = `${total.toFixed(2).replace('.', ',')} DA`;
+    // --- END: NEW UI UPDATE LOGIC ---
+};
 
    const openDrawer = () => {
     if (!drawer || !buyNowBtn) return;
@@ -215,7 +244,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/create-direct-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ customer: customerPayload, item: itemPayload })
+                body: JSON.stringify({ 
+                    customer: customerPayload, 
+                    item: itemPayload,
+                    shippingCost: finalShippingCost // <-- ADD THIS LINE
+                })
             });
 
             const result = await response.json();

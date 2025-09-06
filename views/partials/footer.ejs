@@ -87,7 +87,7 @@
                         </label>
                         <label for="drawer-delivery-stopdesk" id="drawer-stopdesk-label">
                             <input type="radio" id="drawer-delivery-stopdesk" name="deliveryMethod" value="stopdesk">
-                            Stop Desk
+                            Bureau
                         </label>
                     </div>
                 </div>
@@ -104,7 +104,12 @@
         <div class="drawer-footer">
             <div class="drawer-total">
                 <span>Total</span>
-                <span id="drawer-total-price">0,00 DA</span>
+                <div class="drawer-price-wrapper">
+                    <!-- This span will hold the original price with a strikethrough -->
+                    <span id="drawer-original-shipping-price" class="original-price" style="display: none;"></span>
+                    <!-- This span will hold the final total -->
+                    <span id="drawer-total-price">0,00 DA</span>
+                </div>
             </div>
             <button id="drawer-confirm-order-btn" class="btn-primary" type="submit" form="direct-checkout-form">
                 Confirmer la Commande

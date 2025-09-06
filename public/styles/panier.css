@@ -230,3 +230,42 @@
     background-color: transparent;
     border-color: var(--border-color);
 }
+
+
+/* ================================================== */
+/*         STYLES FOR DYNAMIC SHIPPING DISCOUNT       */
+/* ================================================== */
+
+/* Styles the notice message (e.g., "Réduction appliquée!") */
+.shipping-discount-notice {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #2ecc71; /* A positive, green color */
+    text-align: right;
+    margin-top: 2px;
+    height: 1em; /* Reserves space to prevent layout shifts */
+}
+
+.dark-mode .shipping-discount-notice {
+    color: #58d68d;
+}
+
+/* Styles the original price when it's struck through */
+.original-price {
+    text-decoration: line-through;
+    color: var(--text-color-secondary);
+    font-size: 0.9em;
+    margin-right: 8px;
+    opacity: 0.8;
+}
+
+/* A specific class for when shipping is completely free */
+#summary-shipping.free-shipping {
+    color: #2ecc71;
+    font-weight: 700;
+}
+
+.dark-mode #summary-shipping.free-shipping {
+    color: #58d68d;
+}

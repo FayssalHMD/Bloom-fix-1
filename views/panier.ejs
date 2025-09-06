@@ -41,7 +41,7 @@
                             <div class="form-group">
                                 <label>Méthode de Livraison</label>
                                 <div class="radio-group">
-                                    <label><input type="radio" name="summary-delivery" value="stopdesk" checked> Stop Desk</label>
+                                    <label><input type="radio" name="summary-delivery" value="stopdesk" checked> Bureau</label>
                                     <label><input type="radio" name="summary-delivery" value="home"> À Domicile</label>
                                 </div>
                              <!-- ================================================== -->
@@ -58,7 +58,10 @@
 
                         <div class="summary-row">
                             <span>Frais de livraison</span>
-                            <span id="summary-shipping">0,00 DA</span>
+                            <div>
+                                <span id="summary-shipping">0,00 DA</span>
+                                <span id="shipping-discount-notice" class="shipping-discount-notice"></span>
+                            </div>
                         </div>
                         <div class="summary-divider"></div>
                         <div class="summary-row total-row">

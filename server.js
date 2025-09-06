@@ -354,6 +354,7 @@ app.post('/create-direct-order', [
     body('customer.fullName', 'Le nom complet est requis').not().isEmpty().trim().escape(),
     body('customer.phone', 'Un numéro de téléphone valide est requis').isMobilePhone('any', { strictMode: false }).trim(),
     body('customer.wilaya', 'La wilaya est requise').not().isEmpty().trim().escape(),
+    body('shippingCost', 'Le coût de livraison est invalide.').isNumeric() // <-- ADD THIS VALIDATION
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -361,14 +362,15 @@ app.post('/create-direct-order', [
     }
 
     try {
-        const { customer, item } = req.body;
+        // Destructure shippingCost from the body
+        const { customer, item, shippingCost } = req.body; 
+        
         if (!item || !item.id || !item.quantity) {
             return res.status(400).json({ success: false, message: 'Article invalide.' });
         }
 
         let dbItem;
         let priceFromDB;
-        let verifiedItem;
 
         if (item.isPack) {
             dbItem = await Pack.findById(item.id);
@@ -382,7 +384,7 @@ app.post('/create-direct-order', [
             return res.status(404).json({ success: false, message: 'Article non trouvé.' });
         }
 
-        verifiedItem = {
+        const verifiedItem = {
             productId: item.isPack ? null : dbItem._id,
             packId: item.isPack ? dbItem._id : null,
             name: dbItem.name,
@@ -392,31 +394,19 @@ app.post('/create-direct-order', [
             image: dbItem.mainImage
         };
 
-        const shippingInfoPath = path.join(__dirname, 'data', 'shippingInfo.json');
-        const shippingData = JSON.parse(fs.readFileSync(shippingInfoPath, 'utf8'));
-        const wilayaData = shippingData.find(w => w.name === customer.wilaya);
-
-        if (!wilayaData) {
-            return res.status(400).json({ success: false, message: 'Wilaya de livraison invalide.' });
-        }
-
-        let shippingCost = 0;
-        if (customer.deliveryMethod === 'home') {
-            shippingCost = wilayaData.homePrice;
-        } else if (customer.deliveryMethod === 'stopdesk' && wilayaData.hasStopdesk) {
-            shippingCost = wilayaData.stopdeskPrice;
-        } else {
-            shippingCost = wilayaData.homePrice;
-        }
-
+        // --- START OF MAJOR CHANGE ---
+        // The server now TRUSTS the final shipping cost from the client.
+        // All server-side shipping calculation is removed.
         const subtotal = priceFromDB * item.quantity;
-        const total = subtotal + shippingCost;
+        const finalShippingCost = parseFloat(shippingCost);
+        const total = subtotal + finalShippingCost;
+        // --- END OF MAJOR CHANGE ---
 
         const orderData = {
             customer,
             items: [verifiedItem],
             subtotal: subtotal,
-            shipping: shippingCost,
+            shipping: finalShippingCost, // Use the cost from the client
             total: total.toFixed(2) + " DA"
         };
 

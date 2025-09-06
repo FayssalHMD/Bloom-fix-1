@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = typeof USER_DETAILS !== 'undefined' && USER_DETAILS !== null;
     let shippingInfoArray = []; // Will hold the ordered array of wilayas
     let shippingInfoMap = new Map(); // Will hold data for fast lookups
-
+    let finalShippingCost = 0; // <-- ADD THIS LINE
     // --- Get All Elements ---
     const emptyCartContainer = document.getElementById('empty-cart-container');
     const itemsContainer = document.getElementById('cart-items-panel');
@@ -83,28 +83,54 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateSummary = () => {
-        const cart = getCart();
-        const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        
-        const selectedWilaya = summaryWilayaSelect.value;
-        let shippingCost = 0;
+    const cart = getCart();
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-        if (selectedWilaya && shippingInfoMap.has(selectedWilaya)) {
-            const wilayaData = shippingInfoMap.get(selectedWilaya);
-            const deliveryMethod = document.querySelector('input[name="summary-delivery"]:checked').value;
+    const selectedWilaya = summaryWilayaSelect.value;
+    let originalShippingCost = 0;
+    let finalShippingCost = 0;
 
-            if (deliveryMethod === 'home') {
-                shippingCost = wilayaData.homePrice;
-            } else if (deliveryMethod === 'stopdesk' && wilayaData.hasStopdesk) {
-                shippingCost = wilayaData.stopdeskPrice;
-            }
+    if (selectedWilaya && shippingInfoMap.has(selectedWilaya)) {
+        const wilayaData = shippingInfoMap.get(selectedWilaya);
+        const deliveryMethod = document.querySelector('input[name="summary-delivery"]:checked').value;
+
+        if (deliveryMethod === 'home') {
+            originalShippingCost = wilayaData.homePrice;
+        } else if (deliveryMethod === 'stopdesk' && wilayaData.hasStopdesk) {
+            originalShippingCost = wilayaData.stopdeskPrice;
         }
-        
-        const total = subtotal + shippingCost;
-        summarySubtotalEl.textContent = formatPrice(subtotal);
-        summaryShippingEl.textContent = selectedWilaya ? formatPrice(shippingCost) : "0.00 DA";
-        summaryTotalEl.textContent = formatPrice(total);
-    };
+    }
+
+    const discountNoticeEl = document.getElementById('shipping-discount-notice');
+    discountNoticeEl.textContent = '';
+
+    if (subtotal > 10000) {
+        finalShippingCost = 0;
+    } else if (subtotal > 7900) {
+        const deliveryMethod = document.querySelector('input[name="summary-delivery"]:checked').value;
+        if (deliveryMethod === 'stopdesk') {
+            finalShippingCost = 0;
+        } else {
+            finalShippingCost = Math.max(0, originalShippingCost - 400);
+        }
+    } else {
+        finalShippingCost = originalShippingCost;
+    }
+
+    const total = subtotal + finalShippingCost;
+    summarySubtotalEl.textContent = formatPrice(subtotal);
+    summaryTotalEl.textContent = formatPrice(total);
+
+    summaryShippingEl.innerHTML = '';
+
+    if (!selectedWilaya) {
+        summaryShippingEl.textContent = "0.00 DA";
+    } else if (finalShippingCost < originalShippingCost) {
+        summaryShippingEl.innerHTML = `<span class="original-price">${formatPrice(originalShippingCost)}</span> ${formatPrice(finalShippingCost)}`;
+    } else {
+        summaryShippingEl.textContent = formatPrice(finalShippingCost);
+    }
+};
 
     const populateWilayas = () => {
         if (!summaryWilayaSelect || summaryWilayaSelect.options.length > 1) return;
@@ -317,7 +343,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         address: addressInput.value.trim()
                     },
                     items: cartItemsForServer,
-                    shippingCost: parseFloat(summaryShippingEl.textContent) || 0,
+                    shippingCost: finalShippingCost,
                     total: summaryTotalEl.textContent
                 };
 
