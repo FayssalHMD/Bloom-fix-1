@@ -70,6 +70,7 @@
                 </div>
 
                 <!-- Right Panel: Media -->
+               
                 <div class="composer-panel composer-panel-side">
                     <div id="instagram-fields">
                         <div class="form-group">
@@ -80,8 +81,8 @@
                             </label>
                             <input type="file" id="instagramImage" name="instagramImage" accept="image/*" style="display: none;">
                             <div id="instagram-image-preview" class="image-previews">
-                                <% if (testimonial.instagramImage) { %>
-                                    <div class="img-preview"><img src="<%= testimonial.instagramImage %>" alt="Aperçu actuel"></div>
+                                <% if (testimonial.instagramImage && testimonial.instagramImage.url) { %>
+                                    <div class="img-preview"><img src="<%= testimonial.instagramImage.url %>" alt="Aperçu actuel"></div>
                                 <% } %>
                             </div>
                         </div>
@@ -93,8 +94,8 @@
                             <label for="beforeImage" class="image-upload-zone"><p>Changer l'image "Avant"</p></label>
                             <input type="file" id="beforeImage" name="beforeImage" accept="image/*" style="display: none;">
                             <div id="before-image-preview" class="image-previews">
-                                <% if (testimonial.beforeImage) { %>
-                                    <div class="img-preview"><img src="<%= testimonial.beforeImage %>" alt="Aperçu actuel"></div>
+                                <% if (testimonial.beforeImage && testimonial.beforeImage.url) { %>
+                                    <div class="img-preview"><img src="<%= testimonial.beforeImage.url %>" alt="Aperçu actuel"></div>
                                 <% } %>
                             </div>
                         </div>
@@ -103,8 +104,8 @@
                             <label for="afterImage" class="image-upload-zone"><p>Changer l'image "Après"</p></label>
                             <input type="file" id="afterImage" name="afterImage" accept="image/*" style="display: none;">
                             <div id="after-image-preview" class="image-previews">
-                                <% if (testimonial.afterImage) { %>
-                                    <div class="img-preview"><img src="<%= testimonial.afterImage %>" alt="Aperçu actuel"></div>
+                                <% if (testimonial.afterImage && testimonial.afterImage.url) { %>
+                                    <div class="img-preview"><img src="<%= testimonial.afterImage.url %>" alt="Aperçu actuel"></div>
                                 <% } %>
                             </div>
                         </div>

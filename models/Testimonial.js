@@ -2,6 +2,11 @@
 
 const mongoose = require('mongoose');
 
+const imageSchema = {
+    url: { type: String, required: true },
+    public_id: { type: String, required: true }
+};
+
 const testimonialSchema = new mongoose.Schema({
     type: {
         type: String,
@@ -10,17 +15,17 @@ const testimonialSchema = new mongoose.Schema({
         default: 'instagram'
     },
     beforeImage: {
-        type: String,
+        type: imageSchema,
         // Required only if type is 'before-after'
         required: function() { return this.type === 'before-after'; }
     },
     afterImage: {
-        type: String,
+        type: imageSchema,
         // Required only if type is 'before-after'
         required: function() { return this.type === 'before-after'; }
     },
     instagramImage: {
-        type: String,
+        type: imageSchema,
         // Required only if type is 'instagram'
         required: function() { return this.type === 'instagram'; }
     },

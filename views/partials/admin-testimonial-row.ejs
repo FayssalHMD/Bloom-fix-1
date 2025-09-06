@@ -1,11 +1,15 @@
 <tr>
     <td data-label="Image">
-        <% if (testimonial.type === 'before-after') { %>
-            <img src="<%= testimonial.beforeImage %>" alt="Before" class="list-img">
-        <% } else { %>
-            <img src="<%= testimonial.instagramImage %>" alt="Instagram" class="list-img">
-        <% } %>
-    </td>
+    <% 
+        let imageUrl = '/images/placeholder.png'; // Default placeholder
+        if (testimonial.type === 'before-after' && testimonial.beforeImage) {
+            imageUrl = (testimonial.beforeImage.url) ? testimonial.beforeImage.url : testimonial.beforeImage;
+        } else if (testimonial.type === 'instagram' && testimonial.instagramImage) {
+            imageUrl = (testimonial.instagramImage.url) ? testimonial.instagramImage.url : testimonial.instagramImage;
+        }
+    %>
+    <img src="<%= imageUrl %>" alt="<%= testimonial.type %>" class="list-img">
+</td>
     <td data-label="Type">
         <span class="admin-type-tag <%= testimonial.type === 'before-after' ? 'type-before-after' : 'type-instagram' %>">
             <%= testimonial.type === 'before-after' ? 'Before/After' : 'Instagram' %>

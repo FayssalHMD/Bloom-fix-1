@@ -12,10 +12,12 @@
     <%- include('partials/admin-header') %>
 
        <%
-        const enhancedProducts = products.map(p => {
+       const enhancedProducts = products.map(p => {
             const productObject = p.toObject();
-            // FIX: Use mainImage if available, otherwise fall back to the old gallery structure.
-            const imageUrl = productObject.mainImage || (productObject.gallery && productObject.gallery[0]);
+            // NEW LOGIC: Check for the new Cloudinary object structure first.
+            const imageUrl = (productObject.mainImage && productObject.mainImage.url) 
+                ? productObject.mainImage.url 
+                : productObject.mainImage; // Fallback to the old string path
             return { 
                 ...productObject, 
                 type: 'Produit', 
@@ -26,18 +28,20 @@
             };
         });
 
-        const enhancedPacks = packs.map(p => {
-            const packObject = p.toObject();
-            const imageUrl = packObject.mainImage || packObject.imageSrc;
-             return { 
-                ...packObject, 
-                type: 'Pack', 
-                price: packObject.discountedPrice, 
-                image: imageUrl, 
-                editUrl: `/admin/packs/edit/${p._id}`, 
-                deleteUrl: `/admin/packs/delete/${p._id}` 
-            };
-        });
+       const enhancedPacks = packs.map(p => {
+    const packObject = p.toObject();
+    const imageUrl = (packObject.mainImage && packObject.mainImage.url)
+        ? packObject.mainImage.url
+        : packObject.mainImage; // Fallback for old packs
+     return { 
+        ...packObject, 
+        type: 'Pack', 
+        price: packObject.discountedPrice, 
+        image: imageUrl, 
+        editUrl: `/admin/packs/edit/${p._id}`, 
+        deleteUrl: `/admin/packs/delete/${p._id}` 
+    };
+});
     %>
     <main class="admin-main">
         <!-- CHANGED -->

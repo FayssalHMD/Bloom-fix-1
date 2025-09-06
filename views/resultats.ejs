@@ -29,9 +29,9 @@
                 <% beforeAfters.forEach(testimonial => { %>
                     <div class="transformation-card">
                         <div class="magic-reveal-slider">
-                            <img src="<%= testimonial.afterImage %>" alt="Résultat Après" class="after-image">
+                            <img src="<%= (testimonial.afterImage && testimonial.afterImage.url) ? testimonial.afterImage.url : testimonial.afterImage %>" alt="Résultat Après" class="after-image">
                             <div class="before-image-container">
-                                <img src="<%= testimonial.beforeImage %>" alt="Résultat Avant" class="before-image">
+                                <img src="<%= (testimonial.beforeImage && testimonial.beforeImage.url) ? testimonial.beforeImage.url : testimonial.beforeImage %>" alt="Résultat Avant" class="before-image">
                             </div>
                             <div class="slider-handle">
                                 <div class="slider-arrow left"></div>
@@ -51,7 +51,7 @@
                                 <div class="routine-products">
                                     <% testimonial.featuredProducts.forEach(product => { %>
                                         <a href="/produit/<%= product.id %>" class="routine-product-item" title="<%= product.name %>">
-                                            <img src="<%= product.mainImage %>" alt="<%= product.name %>">
+                                            <img src="<%= (product.mainImage && product.mainImage.url) ? product.mainImage.url : product.mainImage %>" alt="<%= product.name %>">
                                         </a>
                                     <% }) %>
                                 </div>
@@ -70,7 +70,7 @@
             <div class="masonry-grid">
                 <% instagrams.forEach(testimonial => { %>
                     <div class="masonry-item">
-                        <img src="<%= testimonial.instagramImage %>" alt="Témoignage Instagram" loading="lazy">
+                        <img src="<%= (testimonial.instagramImage && testimonial.instagramImage.url) ? testimonial.instagramImage.url : testimonial.instagramImage %>" alt="Témoignage Instagram" loading="lazy">
                           <% if (testimonial.quote) { %>
                             <div class="masonry-item-overlay">
                                 <p>"<%= testimonial.quote %>"</p>

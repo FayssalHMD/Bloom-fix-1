@@ -28,14 +28,19 @@ const packSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    // ==================================================
+      // ==================================================
     //                 START OF CHANGES
     // ==================================================
     mainImage: {
-        type: String,
-        required: true
+        url: { type: String, required: true },
+        public_id: { type: String, required: true }
     },
-    gallery: [String],
+    gallery: [
+        {
+            url: { type: String, required: true },
+            public_id: { type: String, required: true }
+        }
+    ],
     // ==================================================
     //                  END OF CHANGES
     // ==================================================

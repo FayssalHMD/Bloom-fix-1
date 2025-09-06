@@ -63,7 +63,7 @@
 
                 <!-- Right Panel: Media & Attributes -->
                 <div class="composer-panel composer-panel-side">
-                    <!-- ================================================== -->
+                     <!-- ================================================== -->
                     <!--                 START OF CHANGES                 -->
                     <!-- ================================================== -->
                     <div class="form-group">
@@ -75,13 +75,13 @@
                         </label>
                         <input type="file" id="mainImage" name="mainImage" accept="image/*" style="display: none;">
                         <div id="main-image-preview" class="image-previews">
-                            <% if (product.mainImage) { %>
+                            <% if (product.mainImage && product.mainImage.url) { %>
                                 <div class="img-preview">
-                                    <img src="<%= product.mainImage %>" alt="Image principale actuelle">
+                                    <img src="<%= product.mainImage.url %>" alt="Image principale actuelle">
                                 </div>
                             <% } %>
                         </div>
-                        <input type="hidden" name="existingMainImagePath" value="<%= product.mainImage %>">
+                        <!-- No longer need the hidden input for main image path -->
                     </div>
 
                     <div class="form-group">
@@ -93,15 +93,16 @@
                         <input type="file" id="gallery" name="gallery" accept="image/*" style="display: none;" multiple>
                         <div id="gallery-previews" class="image-previews">
                             <% if (product.gallery && product.gallery.length > 0) { %>
-                                <% product.gallery.forEach(imageSrc => { %>
-                                    <div class="img-preview" data-path="<%= imageSrc %>">
-                                        <img src="<%= imageSrc %>" alt="Image de la galerie">
+                                <% product.gallery.forEach(image => { %>
+                                    <div class="img-preview" data-public-id="<%= image.public_id %>">
+                                        <img src="<%= image.url %>" alt="Image de la galerie">
                                         <button type="button" class="remove-img-btn" aria-label="Supprimer l'image">×</button>
                                     </div>
                                 <% }) %>
                             <% } %>
                         </div>
-                        <input type="hidden" id="existingGalleryPaths" name="existingGalleryPaths" value='<%- JSON.stringify(product.gallery) %>'>
+                        <!-- This hidden input will now store public_ids of images to be deleted -->
+                        <input type="hidden" id="images_to_delete" name="images_to_delete" value="">
                     </div>
                     <!-- ================================================== -->
                     <!--                  END OF CHANGES                  -->

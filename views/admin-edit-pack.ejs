@@ -79,38 +79,44 @@
                         </label>
                         <input type="file" id="mainImage" name="mainImage" accept="image/*" style="display: none;">
                         <div id="main-image-preview" class="image-previews">
-                            <% const mainImage = pack.mainImage || pack.imageSrc; %>
-                            <% if (mainImage) { %>
+                            <% 
+                                // Handle both old string paths and new object paths
+                                const mainImageUrl = (pack.mainImage && pack.mainImage.url) ? pack.mainImage.url : pack.mainImage;
+                            %>
+                            <% if (mainImageUrl) { %>
                                 <div class="img-preview">
-                                    <img src="<%= mainImage %>" alt="Image principale actuelle">
+                                    <img src="<%= mainImageUrl %>" alt="Image principale actuelle">
                                 </div>
                             <% } %>
                         </div>
-                        <input type="hidden" name="existingMainImagePath" value="<%= mainImage %>">
+                        <!-- Hidden input for old path is no longer needed -->
                     </div>
 
                     <div class="form-group">
                         <label for="gallery">Gérer les Images de la Galerie</label>
                         <label for="gallery" class="image-upload-zone">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                             <p>Ajouter de nouvelles images</p>
                         </label>
                         <input type="file" id="gallery" name="gallery" accept="image/*" style="display: none;" multiple>
                         <div id="gallery-previews" class="image-previews">
                             <% if (pack.gallery && pack.gallery.length > 0) { %>
-                                <% pack.gallery.forEach(imageSrc => { %>
-                                    <div class="img-preview" data-path="<%= imageSrc %>">
-                                        <img src="<%= imageSrc %>" alt="Image de la galerie">
+                                <% pack.gallery.forEach(image => { %>
+                                    <% 
+                                        // Handle both old string paths and new object paths
+                                        const imageUrl = (image && image.url) ? image.url : image;
+                                        const publicId = (image && image.public_id) ? image.public_id : '';
+                                    %>
+                                    <div class="img-preview" data-public-id="<%= publicId %>">
+                                        <img src="<%= imageUrl %>" alt="Image de la galerie">
                                         <button type="button" class="remove-img-btn" aria-label="Supprimer l'image">×</button>
                                     </div>
                                 <% }) %>
                             <% } %>
                         </div>
-                        <input type="hidden" id="existingGalleryPaths" name="existingGalleryPaths" value='<%- JSON.stringify(pack.gallery || []) %>'>
+                        <!-- This hidden input will now store public_ids of images to be deleted -->
+                        <input type="hidden" id="images_to_delete" name="images_to_delete" value="">
                     </div>
-                    <!-- ================================================== -->
-                    <!--                  END OF CHANGES                  -->
-                    <!-- ================================================== -->
                 </div>
             </div>
 
@@ -122,7 +128,7 @@
     </main>
 
     <%- include('partials/footer') %>
-        <script nonce="<%= nonce %>" src="functions/admin-form.js"></script>
+        <script nonce="<%= nonce %>" src="/functions/admin-form.js"></script>
 
 </body>
 </html>

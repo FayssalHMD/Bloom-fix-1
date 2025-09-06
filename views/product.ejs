@@ -14,7 +14,16 @@
 
     <main class="product-page-main">
         <section class="product-detail-section">
-            <% const primaryImage = product.mainImage || (product.gallery && product.gallery[0]) || '/images/placeholder.png'; %>
+          <% 
+                const getImageUrl = (image) => {
+                    if (typeof image === 'object' && image !== null && image.url) {
+                        return image.url; // New structure: { url, public_id }
+                    }
+                    return image; // Old structure: "path/to/image.jpg"
+                };
+
+                const primaryImage = getImageUrl(product.mainImage) || '/images/placeholder.png';
+            %>
 
             <div class="product-detail-layout">
                 <div class="product-image-gallery">
@@ -22,19 +31,20 @@
                     <img src="<%= primaryImage %>" alt="<%= product.name %>" id="main-product-image" class="main-product-image">
                     
                     <div class="product-thumbnail-container" id="product-thumbnail-container">
+                        <!-- The main image's thumbnail -->
                         <img src="<%= primaryImage %>" 
-                             alt="Thumbnail for <%= product.name %>" 
-                             class="thumbnail-image active" 
-                             data-src="<%= primaryImage %>">
+                            alt="Thumbnail for <%= product.name %>" 
+                            class="thumbnail-image active" 
+                            data-src="<%= primaryImage %>">
 
+                        <!-- Gallery thumbnails -->
                         <% if (product.gallery && product.gallery.length > 0) { %>
-                            <% product.gallery.forEach((imageSrc, index) => { %>
-                                <% if (imageSrc !== primaryImage) { %>
-                                    <img src="<%= imageSrc %>" 
-                                         alt="Thumbnail <%= index + 2 %> for <%= product.name %>" 
-                                         class="thumbnail-image" 
-                                         data-src="<%= imageSrc %>">
-                                <% } %>
+                            <% product.gallery.forEach((galleryImage, index) => { %>
+                                <% const imageUrl = getImageUrl(galleryImage); %>
+                                <img src="<%= imageUrl %>" 
+                                    alt="Thumbnail <%= index + 2 %> for <%= product.name %>" 
+                                    class="thumbnail-image" 
+                                    data-src="<%= imageUrl %>">
                             <% }) %>
                         <% } %>
                     </div>

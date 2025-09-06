@@ -13,6 +13,24 @@ const flash = require('connect-flash');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
+
+
+// ==================================================
+//                 START OF CHANGES
+// ==================================================
+const cloudinary = require('cloudinary').v2;
+
+// --- CLOUDINARY CONFIGURATION ---
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+// ==================================================
+//                  END OF CHANGES
+// ==================================================
+
+
 // --- MODEL IMPORTS ---
 const Product = require('./models/Product');
 const Pack = require('./models/Pack');
@@ -114,7 +132,7 @@ app.use(
           'data:',
         ],
         connectSrc: ["'self'", 'https://ka-f.fontawesome.com'],
-        imgSrc: ["'self'", 'data:', 'blob:'],
+        imgSrc: ["'self'", 'data:', 'blob:', 'https://res.cloudinary.com'],
       },
     },
   })
@@ -144,27 +162,18 @@ app.use('/forgot-password', authLimiter);
 app.use('/reset-password', authLimiter);
 
 // ==================================================
-//         MULTER CONFIGURATION
+//         MULTER CONFIGURATION (UPDATED)
 // ==================================================
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dest = 'public/images/products';
-    fs.mkdirSync(dest, { recursive: true });
-    cb(null, dest);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)
-    );
-  },
-});
+// CHANGE: We now use memoryStorage to hold the file buffer before uploading to Cloudinary
+const storage = multer.memoryStorage(); 
+
 const fileFilter = (req, file, cb) =>
   file.mimetype.startsWith('image')
     ? cb(null, true)
     : cb(new Error('Not an image!'), false);
+
 const upload = multer({ storage, fileFilter });
+
 const productUpload = upload.fields([
   { name: 'mainImage', maxCount: 1 },
   { name: 'gallery', maxCount: 5 },
@@ -464,14 +473,24 @@ app.post('/api/cart/sync', async (req, res) => {
         const masterDataMap = new Map();
         productsFromDB.forEach(p => masterDataMap.set(p._id.toString(), { ...p, type: 'Product' }));
         packsFromDB.forEach(p => masterDataMap.set(p._id.toString(), { ...p, type: 'Pack' }));
+        // server.js (Corrected code)
         const syncedCart = clientCartItems.map(clientItem => {
             const dbItem = masterDataMap.get(clientItem.id);
             if (!dbItem) return null;
             const price = dbItem.type === 'Pack' ? dbItem.discountedPrice : dbItem.price;
+
+            // NEW LOGIC: Correctly extract the image URL
+            const imageUrl = (dbItem.mainImage && dbItem.mainImage.url) 
+                ? dbItem.mainImage.url 
+                : dbItem.mainImage; // Fallback for old data structure
+
             return {
                 productId: dbItem.type === 'Product' ? dbItem._id : undefined,
                 packId: dbItem.type === 'Pack' ? dbItem._id : undefined,
-                name: dbItem.name, price, image: dbItem.mainImage, isPack: dbItem.type === 'Pack',
+                name: dbItem.name, 
+                price, 
+                image: imageUrl, // Use the corrected imageUrl variable
+                isPack: dbItem.type === 'Pack',
                 quantity: clientItem.quantity
             };
         }).filter(item => item !== null);
@@ -1269,7 +1288,11 @@ app.get('/compte/commande/:orderId', userAuthMiddleware, async (req, res) => {
 // ==================================================
 app.get('/admin', (req, res) => {
   // Pass a dummy csrfToken to prevent EJS from crashing if the variable is used
-  res.render('admin-login', { error: null, csrfToken: '' });
+  res.render('admin-login', { 
+    error: null, 
+    csrfToken: '', 
+    pageType: 'admin' // <-- ADD THIS LINE
+  });
 });
 
 app.get('/admin/dashboard', authMiddleware, async (req, res) => {
@@ -1565,73 +1588,80 @@ app.post(
         product: product,
         errors: errors.array(),
         oldInput: req.body,
-        csrfToken: ''
       });
     }
+
     try {
-      const {
-        name,
-        price,
-        short_description,
-        description,
-        ingredients,
-        how_to_use,
-        existingMainImagePath,
-        existingGalleryPaths,
-      } = req.body;
       const product = await Product.findById(productId);
       if (!product) {
-        return res.status(404).send('Product not found.');
+        req.flash('error', 'Produit non trouvé.');
+        return res.redirect('/admin/products');
       }
 
-      const updatedData = {
-        name,
-        price,
-        short_description,
-        description,
-        ingredients: ingredients
-          ? ingredients.split(',').map((item) => item.trim())
-          : [],
-        how_to_use: how_to_use
-          ? how_to_use.split(',').map((item) => item.trim())
-          : [],
-      };
+      // --- 1. Handle Deletion of Existing Images ---
+      const idsToDelete = req.body.images_to_delete ? req.body.images_to_delete.split(',') : [];
+      if (idsToDelete.length > 0) {
+        await cloudinary.api.delete_resources(idsToDelete);
+        // Remove deleted images from the product's gallery in the database
+        product.gallery = product.gallery.filter(img => !idsToDelete.includes(img.public_id));
+      }
 
+      // --- 2. Handle Main Image Update ---
       if (req.files.mainImage) {
-        updatedData.mainImage =
-          '/images/products/' + req.files.mainImage[0].filename;
-        if (product.mainImage) deleteFile(product.mainImage);
-      } else {
-        updatedData.mainImage = existingMainImagePath;
+        // Delete the old main image from Cloudinary
+        if (product.mainImage && product.mainImage.public_id) {
+          await cloudinary.uploader.destroy(product.mainImage.public_id);
+        }
+        // Upload the new main image
+        const mainImageFile = req.files.mainImage[0];
+        const mainImageResult = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream({ folder: "bloom_products" }, (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            });
+            uploadStream.end(mainImageFile.buffer);
+        });
+        product.mainImage = {
+            url: mainImageResult.secure_url,
+            public_id: mainImageResult.public_id
+        };
       }
 
-      const keptGalleryPaths = existingGalleryPaths
-        ? JSON.parse(existingGalleryPaths)
-        : [];
-      let newGalleryPaths = [...keptGalleryPaths];
-      if (req.files.gallery) {
-        newGalleryPaths.push(
-          ...req.files.gallery.map(
-            (file) => '/images/products/' + file.filename
-          )
+      // --- 3. Handle New Gallery Image Uploads ---
+      if (req.files.gallery && req.files.gallery.length > 0) {
+        const galleryResults = await Promise.all(
+          req.files.gallery.map(file => new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream({ folder: "bloom_products" }, (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            });
+            uploadStream.end(file.buffer);
+          }))
         );
+        const newGalleryImages = galleryResults.map(result => ({
+            url: result.secure_url,
+            public_id: result.public_id
+        }));
+        product.gallery.push(...newGalleryImages);
       }
-      updatedData.gallery = newGalleryPaths;
 
-      const originalGallery = product.gallery || [];
-      originalGallery.forEach((originalImagePath) => {
-        if (!keptGalleryPaths.includes(originalImagePath))
-          deleteFile(originalImagePath);
-      });
+      // --- 4. Update Text Fields ---
+      const { name, price, short_description, description, ingredients, how_to_use } = req.body;
+      product.name = name;
+      product.price = price;
+      product.short_description = short_description;
+      product.description = description;
+      product.ingredients = ingredients ? ingredients.split(',').map(item => item.trim()) : [];
+      product.how_to_use = how_to_use ? how_to_use.split(',').map(item => item.trim()) : [];
 
-      await Product.findByIdAndUpdate(productId, updatedData);
-      req.flash(
-        'success',
-        `Le produit "${updatedData.name}" a été mis à jour avec succès.`
-      );
+      // --- 5. Save the Updated Product ---
+      await product.save();
+
+      req.flash('success', `Le produit "${product.name}" a été mis à jour avec succès.`);
       res.redirect('/admin/products');
+
     } catch (error) {
-      console.error('Error updating product:', error);
+      console.error('Error updating product with Cloudinary:', error);
       res.status(500).render('admin-error', {
         pageType: 'admin',
         message: 'Erreur lors de la mise à jour du produit.',
@@ -1640,6 +1670,9 @@ app.post(
   }
 );
 
+// ==================================================
+//                 START OF CHANGES
+// ==================================================
 app.post(
   '/admin/products/add',
   authMiddleware,
@@ -1652,9 +1685,9 @@ app.post(
         pageType: 'admin',
         errors: errors.array(),
         oldInput: req.body,
-        csrfToken: ''
       });
     }
+
     try {
       const {
         name,
@@ -1664,46 +1697,83 @@ app.post(
         ingredients,
         how_to_use,
       } = req.body;
+
       if (!req.files || !req.files.mainImage) {
         return res.status(400).render('admin-add-product', {
           pageType: 'admin',
           errors: [{ msg: "L'image principale est requise." }],
           oldInput: req.body,
-          csrfToken: ''
         });
       }
+
+      // --- UPLOAD MAIN IMAGE TO CLOUDINARY ---
+      const mainImageFile = req.files.mainImage[0];
+      const mainImageResult = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "bloom_products" }, // Optional: organize uploads in a folder
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        uploadStream.end(mainImageFile.buffer);
+      });
+
+      // --- UPLOAD GALLERY IMAGES TO CLOUDINARY ---
+      let galleryResults = [];
+      if (req.files.gallery && req.files.gallery.length > 0) {
+        galleryResults = await Promise.all(
+          req.files.gallery.map(file => {
+            return new Promise((resolve, reject) => {
+              const uploadStream = cloudinary.uploader.upload_stream(
+                { folder: "bloom_products" },
+                (error, result) => {
+                  if (error) return reject(error);
+                  resolve(result);
+                }
+              );
+              uploadStream.end(file.buffer);
+            });
+          })
+        );
+      }
+
       const baseSlug = slugify(name, { lower: true, strict: true });
       const uniqueSlug = `${baseSlug}-${crypto.randomBytes(4).toString('hex')}`;
-      const mainImagePath =
-        '/images/products/' + req.files.mainImage[0].filename;
-      const galleryPaths = req.files.gallery
-        ? req.files.gallery.map((file) => '/images/products/' + file.filename)
-        : [];
+      
       const ingredientsArray = ingredients
         ? ingredients.split(',').map((item) => item.trim())
         : [];
       const howToUseArray = how_to_use
         ? how_to_use.split(',').map((item) => item.trim())
         : [];
+
       const newProduct = new Product({
         id: uniqueSlug,
         name,
         price,
         short_description,
         description,
-        mainImage: mainImagePath,
-        gallery: galleryPaths,
+        mainImage: {
+            url: mainImageResult.secure_url,
+            public_id: mainImageResult.public_id
+        },
+        gallery: galleryResults.map(result => ({
+            url: result.secure_url,
+            public_id: result.public_id
+        })),
         ingredients: ingredientsArray,
         how_to_use: howToUseArray,
       });
+
       await newProduct.save();
       req.flash(
         'success',
         `Le produit "${newProduct.name}" a été créé avec succès.`
       );
       res.redirect('/admin/products');
-    } catch (error) { // <-- CORRECTED SYNTAX HERE
-      console.error('Error adding new product:', error);
+    } catch (error) {
+      console.error('Error adding new product with Cloudinary:', error);
       res.status(500).render('admin-error', {
         pageType: 'admin',
         message: 'Erreur lors de la création du produit.',
@@ -1711,19 +1781,38 @@ app.post(
     }
   }
 );
+// ==================================================
+//                  END OF CHANGES
+// ==================================================
 
 app.post('/admin/products/delete/:id', authMiddleware, async (req, res) => {
   try {
-    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
-    if (deletedProduct) {
-      if (deletedProduct.mainImage) deleteFile(deletedProduct.mainImage);
-      if (deletedProduct.gallery && deletedProduct.gallery.length > 0) {
-        deletedProduct.gallery.forEach((imagePath) => deleteFile(imagePath));
+    const productId = req.params.id;
+    const product = await Product.findById(productId);
+
+    if (product) {
+      // --- 1. Delete Main Image from Cloudinary ---
+      if (product.mainImage && product.mainImage.public_id) {
+        await cloudinary.uploader.destroy(product.mainImage.public_id);
       }
+
+      // --- 2. Delete Gallery Images from Cloudinary ---
+      if (product.gallery && product.gallery.length > 0) {
+        const publicIds = product.gallery.map(image => image.public_id).filter(id => id);
+        if (publicIds.length > 0) {
+          await cloudinary.api.delete_resources(publicIds);
+        }
+      }
+
+      // --- 3. Delete Product from MongoDB ---
+      await Product.findByIdAndDelete(productId);
+      
       req.flash(
         'success',
-        `Le produit "${deletedProduct.name}" a été supprimé.`
+        `Le produit "${product.name}" a été supprimé.`
       );
+    } else {
+        req.flash('error', 'Produit non trouvé.');
     }
     res.redirect('/admin/products');
   } catch (error) {
@@ -1736,7 +1825,7 @@ app.post('/admin/products/delete/:id', authMiddleware, async (req, res) => {
 app.post(
   '/admin/packs/add',
   authMiddleware,
-  productUpload,
+  productUpload, // This middleware name is fine, it handles mainImage and gallery
   packValidationRules,
   async (req, res) => {
     const errors = validationResult(req);
@@ -1745,27 +1834,44 @@ app.post(
         pageType: 'admin',
         errors: errors.array(),
         oldInput: req.body,
-        csrfToken: ''
       });
     }
     try {
-      const { name, contents, description, originalPrice, discountedPrice } =
-        req.body;
+      const { name, contents, description, originalPrice, discountedPrice } = req.body;
+      
       if (!req.files || !req.files.mainImage) {
         return res.status(400).render('admin-add-pack', {
           pageType: 'admin',
           errors: [{ msg: "L'image principale est requise." }],
           oldInput: req.body,
-          csrfToken: ''
         });
       }
+
+      // --- UPLOAD MAIN IMAGE TO CLOUDINARY ---
+      const mainImageFile = req.files.mainImage[0];
+      const mainImageResult = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream({ folder: "bloom_packs" }, (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }).end(mainImageFile.buffer);
+      });
+
+      // --- UPLOAD GALLERY IMAGES TO CLOUDINARY ---
+      let galleryResults = [];
+      if (req.files.gallery && req.files.gallery.length > 0) {
+        galleryResults = await Promise.all(
+          req.files.gallery.map(file => new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream({ folder: "bloom_packs" }, (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            }).end(file.buffer);
+          }))
+        );
+      }
+
       const baseSlug = slugify(name, { lower: true, strict: true });
       const uniqueSlug = `${baseSlug}-${crypto.randomBytes(4).toString('hex')}`;
-      const mainImagePath =
-        '/images/products/' + req.files.mainImage[0].filename;
-      const galleryPaths = req.files.gallery
-        ? req.files.gallery.map((file) => '/images/products/' + file.filename)
-        : [];
+      
       const newPack = new Pack({
         id: uniqueSlug,
         name,
@@ -1773,9 +1879,16 @@ app.post(
         description,
         originalPrice,
         discountedPrice,
-        mainImage: mainImagePath,
-        gallery: galleryPaths,
+        mainImage: {
+            url: mainImageResult.secure_url,
+            public_id: mainImageResult.public_id
+        },
+        gallery: galleryResults.map(result => ({
+            url: result.secure_url,
+            public_id: result.public_id
+        })),
       });
+
       await newPack.save();
       req.flash('success', `Le pack "${newPack.name}" a été créé avec succès.`);
       res.redirect('/admin/products');
@@ -1792,7 +1905,7 @@ app.post(
 app.post(
   '/admin/packs/edit/:id',
   authMiddleware,
-  productUpload,
+  productUpload, // Middleware is fine
   packValidationRules,
   async (req, res) => {
     const packId = req.params.id;
@@ -1805,62 +1918,74 @@ app.post(
         pack: pack,
         errors: errors.array(),
         oldInput: req.body,
-        csrfToken: ''
       });
     }
+
     try {
-      const {
-        name,
-        contents,
-        description,
-        originalPrice,
-        discountedPrice,
-        existingMainImagePath,
-        existingGalleryPaths,
-      } = req.body;
       const pack = await Pack.findById(packId);
       if (!pack) {
-        return res.status(404).send('Pack not found.');
+        req.flash('error', 'Pack non trouvé.');
+        return res.redirect('/admin/products');
       }
-      const updatedData = {
-        name,
-        contents,
-        description,
-        originalPrice,
-        discountedPrice,
-      };
+
+      // 1. Handle Deletion of Existing Images
+      const idsToDelete = req.body.images_to_delete ? req.body.images_to_delete.split(',') : [];
+      if (idsToDelete.length > 0) {
+        await cloudinary.api.delete_resources(idsToDelete);
+        pack.gallery = pack.gallery.filter(img => !idsToDelete.includes(img.public_id));
+      }
+
+      // 2. Handle Main Image Update
       if (req.files.mainImage) {
-        updatedData.mainImage =
-          '/images/products/' + req.files.mainImage[0].filename;
-        if (pack.mainImage) deleteFile(pack.mainImage);
-      } else {
-        updatedData.mainImage = existingMainImagePath;
+        if (pack.mainImage && pack.mainImage.public_id) {
+          await cloudinary.uploader.destroy(pack.mainImage.public_id);
+        }
+        const mainImageFile = req.files.mainImage[0];
+        const mainImageResult = await new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream({ folder: "bloom_packs" }, (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            }).end(mainImageFile.buffer);
+        });
+        pack.mainImage = {
+            url: mainImageResult.secure_url,
+            public_id: mainImageResult.public_id
+        };
       }
-      const keptGalleryPaths = existingGalleryPaths
-        ? JSON.parse(existingGalleryPaths)
-        : [];
-      let newGalleryPaths = [...keptGalleryPaths];
-      if (req.files.gallery) {
-        newGalleryPaths.push(
-          ...req.files.gallery.map(
-            (file) => '/images/products/' + file.filename
-          )
+
+      // 3. Handle New Gallery Image Uploads
+      if (req.files.gallery && req.files.gallery.length > 0) {
+        const galleryResults = await Promise.all(
+          req.files.gallery.map(file => new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream({ folder: "bloom_packs" }, (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            }).end(file.buffer);
+          }))
         );
+        const newGalleryImages = galleryResults.map(result => ({
+            url: result.secure_url,
+            public_id: result.public_id
+        }));
+        pack.gallery.push(...newGalleryImages);
       }
-      updatedData.gallery = newGalleryPaths;
-      const originalGallery = pack.gallery || [];
-      originalGallery.forEach((originalImagePath) => {
-        if (!keptGalleryPaths.includes(originalImagePath))
-          deleteFile(originalImagePath);
-      });
-      await Pack.findByIdAndUpdate(packId, updatedData);
-      req.flash(
-        'success',
-        `Le pack "${updatedData.name}" a été mis à jour avec succès.`
-      );
+
+      // 4. Update Text Fields
+      const { name, contents, description, originalPrice, discountedPrice } = req.body;
+      pack.name = name;
+      pack.contents = contents;
+      pack.description = description;
+      pack.originalPrice = originalPrice;
+      pack.discountedPrice = discountedPrice;
+
+      // 5. Save the Updated Pack
+      await pack.save();
+
+      req.flash('success', `Le pack "${pack.name}" a été mis à jour avec succès.`);
       res.redirect('/admin/products');
+
     } catch (error) {
-      console.error('Error updating pack:', error);
+      console.error('Error updating pack with Cloudinary:', error);
       res.status(500).render('admin-error', {
         pageType: 'admin',
         message: 'Erreur lors de la mise à jour du pack.',
@@ -1871,13 +1996,29 @@ app.post(
 
 app.post('/admin/packs/delete/:id', authMiddleware, async (req, res) => {
   try {
-    const deletedPack = await Pack.findByIdAndDelete(req.params.id);
-    if (deletedPack) {
-      if (deletedPack.mainImage) deleteFile(deletedPack.mainImage);
-      if (deletedPack.gallery && deletedPack.gallery.length > 0) {
-        deletedPack.gallery.forEach((imagePath) => deleteFile(imagePath));
+    const packId = req.params.id;
+    const pack = await Pack.findById(packId);
+
+    if (pack) {
+      // 1. Delete Main Image from Cloudinary
+      if (pack.mainImage && pack.mainImage.public_id) {
+        await cloudinary.uploader.destroy(pack.mainImage.public_id);
       }
-      req.flash('success', `Le pack "${deletedPack.name}" a été supprimé.`);
+
+      // 2. Delete Gallery Images from Cloudinary
+      if (pack.gallery && pack.gallery.length > 0) {
+        const publicIds = pack.gallery.map(image => image.public_id).filter(id => id);
+        if (publicIds.length > 0) {
+          await cloudinary.api.delete_resources(publicIds);
+        }
+      }
+
+      // 3. Delete Pack from MongoDB
+      await Pack.findByIdAndDelete(packId);
+      
+      req.flash('success', `Le pack "${pack.name}" a été supprimé.`);
+    } else {
+      req.flash('error', 'Pack non trouvé.');
     }
     res.redirect('/admin/products');
   } catch (error) {
@@ -1892,44 +2033,56 @@ app.post(
   authMiddleware,
   testimonialUpload,
   async (req, res) => {
+    // No server-side validation rules needed as it's complex with conditional fields
     try {
       const { type, quote, story, featuredProducts } = req.body;
       const newTestimonialData = { type, quote, story, featuredProducts };
+
+      // Helper function for uploading a single file
+      const uploadToCloudinary = (file) => {
+        return new Promise((resolve, reject) => {
+          cloudinary.uploader.upload_stream({ folder: "bloom_testimonials" }, (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }).end(file.buffer);
+        });
+      };
+
       if (type === 'before-after') {
-        if (req.files && req.files.beforeImage)
-          newTestimonialData.beforeImage =
-            '/images/products/' + req.files.beforeImage[0].filename;
-        if (req.files && req.files.afterImage)
-          newTestimonialData.afterImage =
-            '/images/products/' + req.files.afterImage[0].filename;
+        if (!req.files.beforeImage || !req.files.afterImage) {
+          throw new Error('Les images "Avant" et "Après" sont requises pour ce type de témoignage.');
+        }
+        const [beforeResult, afterResult] = await Promise.all([
+          uploadToCloudinary(req.files.beforeImage[0]),
+          uploadToCloudinary(req.files.afterImage[0])
+        ]);
+        newTestimonialData.beforeImage = { url: beforeResult.secure_url, public_id: beforeResult.public_id };
+        newTestimonialData.afterImage = { url: afterResult.secure_url, public_id: afterResult.public_id };
+
       } else if (type === 'instagram') {
-        if (req.files && req.files.instagramImage)
-          newTestimonialData.instagramImage =
-            '/images/products/' + req.files.instagramImage[0].filename;
+        if (!req.files.instagramImage) {
+          throw new Error("L'image Instagram est requise pour ce type de témoignage.");
+        }
+        const instagramResult = await uploadToCloudinary(req.files.instagramImage[0]);
+        newTestimonialData.instagramImage = { url: instagramResult.secure_url, public_id: instagramResult.public_id };
       }
+
       const testimonial = new Testimonial(newTestimonialData);
       await testimonial.save();
       req.flash('success', 'Le témoignage a été ajouté avec succès.');
       res.redirect('/admin/testimonials');
+
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        const products = await Product.find({}, 'id name');
-        const validationErrors = Object.values(error.errors).map((err) => ({
-          msg: err.message,
-        }));
-        return res.status(400).render('admin-add-testimonial', {
+      console.error('Error adding new testimonial:', error);
+      req.flash('error', error.message || 'Erreur lors de la création du témoignage.');
+      // Redirect back with old input to repopulate the form
+      const products = await Product.find({}, 'id name');
+      res.status(400).render('admin-add-testimonial', {
           pageTitle: 'Ajouter un Témoignage',
           pageType: 'admin',
           products,
-          errors: validationErrors,
+          errors: [{ msg: error.message || 'Une erreur est survenue.' }],
           oldInput: req.body,
-          csrfToken: ''
-        });
-      }
-      console.error('Error adding new testimonial:', error);
-      res.status(500).render('admin-error', {
-        pageType: 'admin',
-        message: 'Erreur lors de la création du témoignage.',
       });
     }
   }
@@ -1948,74 +2101,82 @@ app.post(
         req.flash('error', 'Témoignage non trouvé.');
         return res.redirect('/admin/testimonials');
       }
-      const updatedData = {
-        type,
-        quote,
-        story,
-        featuredProducts: featuredProducts || [],
-      };
+
+      const uploadHelper = (file) => new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream({ folder: "bloom_testimonials" }, (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+        }).end(file.buffer);
+      });
+
+      // Update text fields
+      testimonial.type = type;
+      testimonial.quote = quote;
+      testimonial.story = story;
+      testimonial.featuredProducts = featuredProducts || [];
+
+      // Handle image updates based on type
       if (type === 'before-after') {
         if (req.files.beforeImage) {
-          deleteFile(testimonial.beforeImage);
-          updatedData.beforeImage =
-            '/images/products/' + req.files.beforeImage[0].filename;
+          if (testimonial.beforeImage) await cloudinary.uploader.destroy(testimonial.beforeImage.public_id);
+          const result = await uploadHelper(req.files.beforeImage[0]);
+          testimonial.beforeImage = { url: result.secure_url, public_id: result.public_id };
         }
         if (req.files.afterImage) {
-          deleteFile(testimonial.afterImage);
-          updatedData.afterImage =
-            '/images/products/' + req.files.afterImage[0].filename;
+          if (testimonial.afterImage) await cloudinary.uploader.destroy(testimonial.afterImage.public_id);
+          const result = await uploadHelper(req.files.afterImage[0]);
+          testimonial.afterImage = { url: result.secure_url, public_id: result.public_id };
         }
-        updatedData.instagramImage = undefined;
-        if (testimonial.instagramImage) deleteFile(testimonial.instagramImage);
+        // If switching TO before-after, delete the old instagram image
+        if (testimonial.instagramImage) {
+            await cloudinary.uploader.destroy(testimonial.instagramImage.public_id);
+            testimonial.instagramImage = undefined;
+        }
       } else if (type === 'instagram') {
         if (req.files.instagramImage) {
-          deleteFile(testimonial.instagramImage);
-          updatedData.instagramImage =
-            '/images/products/' + req.files.instagramImage[0].filename;
+          if (testimonial.instagramImage) await cloudinary.uploader.destroy(testimonial.instagramImage.public_id);
+          const result = await uploadHelper(req.files.instagramImage[0]);
+          testimonial.instagramImage = { url: result.secure_url, public_id: result.public_id };
         }
-        updatedData.beforeImage = undefined;
-        updatedData.afterImage = undefined;
-        if (testimonial.beforeImage) deleteFile(testimonial.beforeImage);
-        if (testimonial.afterImage) deleteFile(testimonial.afterImage);
+        // If switching TO instagram, delete the old before/after images
+        if (testimonial.beforeImage) {
+            await cloudinary.uploader.destroy(testimonial.beforeImage.public_id);
+            testimonial.beforeImage = undefined;
+        }
+        if (testimonial.afterImage) {
+            await cloudinary.uploader.destroy(testimonial.afterImage.public_id);
+            testimonial.afterImage = undefined;
+        }
       }
-      await Testimonial.findByIdAndUpdate(testimonialId, updatedData, {
-        runValidators: true,
-      });
+
+      await testimonial.save();
       req.flash('success', 'Le témoignage a été mis à jour avec succès.');
       res.redirect('/admin/testimonials');
+
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        const products = await Product.find({}, 'id name');
-        const validationErrors = Object.values(error.errors).map((err) => ({
-          msg: err.message,
-        }));
-        const currentData = await Testimonial.findById(testimonialId);
-        return res.status(400).render('admin-edit-testimonial', {
-          pageTitle: 'Modifier le Témoignage',
-          pageType: 'admin',
-          products,
-          testimonial: currentData,
-          errors: validationErrors,
-          oldInput: req.body,
-          csrfToken: ''
-        });
-      }
       console.error('Error updating testimonial:', error);
-      res.status(500).render('admin-error', {
-        pageType: 'admin',
-        message: 'Erreur lors de la mise à jour du témoignage.',
-      });
+      req.flash('error', 'Erreur lors de la mise à jour du témoignage.');
+      res.redirect(`/admin/testimonials/edit/${testimonialId}`);
     }
   }
 );
 
 app.post('/admin/testimonials/delete/:id', authMiddleware, async (req, res) => {
   try {
-    const testimonial = await Testimonial.findByIdAndDelete(req.params.id);
+    const testimonial = await Testimonial.findById(req.params.id);
     if (testimonial) {
-      if (testimonial.beforeImage) deleteFile(testimonial.beforeImage);
-      if (testimonial.afterImage) deleteFile(testimonial.afterImage);
-      if (testimonial.instagramImage) deleteFile(testimonial.instagramImage);
+      // Delete all associated images from Cloudinary
+      const publicIdsToDelete = [];
+      if (testimonial.beforeImage) publicIdsToDelete.push(testimonial.beforeImage.public_id);
+      if (testimonial.afterImage) publicIdsToDelete.push(testimonial.afterImage.public_id);
+      if (testimonial.instagramImage) publicIdsToDelete.push(testimonial.instagramImage.public_id);
+
+      if (publicIdsToDelete.length > 0) {
+        await cloudinary.api.delete_resources(publicIdsToDelete);
+      }
+
+      // Delete the testimonial from MongoDB
+      await Testimonial.findByIdAndDelete(req.params.id);
       req.flash('success', 'Le témoignage a été supprimé avec succès.');
     } else {
       req.flash('error', 'Témoignage non trouvé.');

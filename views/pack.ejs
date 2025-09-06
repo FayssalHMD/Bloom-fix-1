@@ -13,87 +13,94 @@
     <%- include('partials/header') %>
 
     <main class="product-page-main">
-        <section class="product-detail-section">
-            <% const primaryImage = pack.mainImage || pack.imageSrc || '/images/placeholder.png'; %>
+    <section class="product-detail-section">
+        <% 
+            // New logic to handle both old and new image structures
+            const getImageUrl = (image) => {
+                if (typeof image === 'object' && image !== null && image.url) {
+                    return image.url; // New structure: { url, public_id }
+                }
+                return image; // Old structure: "path/to/image.jpg"
+            };
 
-            <div class="product-detail-layout">
-                <div class="product-image-gallery">
-                    <div class="image-bg-shape"></div>
-                    <img src="<%= primaryImage %>" alt="<%= pack.name %>" id="main-product-image" class="main-product-image">
-                    
-                    <div class="product-thumbnail-container" id="product-thumbnail-container">
-                        <img src="<%= primaryImage %>" 
-                             alt="Thumbnail for <%= pack.name %>" 
-                             class="thumbnail-image active" 
-                             data-src="<%= primaryImage %>">
+            const primaryImage = getImageUrl(pack.mainImage) || '/images/placeholder.png';
+        %>
 
-                        <% if (pack.gallery && pack.gallery.length > 0) { %>
-                            <% pack.gallery.forEach((imageSrc, index) => { %>
-                                <img src="<%= imageSrc %>" 
-                                     alt="Thumbnail <%= index + 2 %> for <%= pack.name %>" 
-                                     class="thumbnail-image" 
-                                     data-src="<%= imageSrc %>">
-                            <% }) %>
-                        <% } %>
-                    </div>
-                </div>
-                <div class="product-purchase-panel">
-                    <h1 id="pack-name"><%= pack.name %></h1>
-                    <p id="pack-contents"><%= pack.contents %></p>
+        <div class="product-detail-layout">
+            <div class="product-image-gallery">
+                <div class="image-bg-shape"></div>
+                <img src="<%= primaryImage %>" alt="<%= pack.name %>" id="main-product-image" class="main-product-image">
+                
+                <div class="product-thumbnail-container" id="product-thumbnail-container">
+                    <!-- The main image's thumbnail -->
+                    <img src="<%= primaryImage %>" 
+                         alt="Thumbnail for <%= pack.name %>" 
+                         class="thumbnail-image active" 
+                         data-src="<%= primaryImage %>">
 
-                    <div class="quantity-section">
-                        <div class="quantity-selector">
-                            <button id="quantity-minus" class="quantity-btn" aria-label="Réduire la quantité">-</button>
-                            <span id="quantity-display" class="quantity-value">1</span>
-                            <button id="quantity-plus" class="quantity-btn" aria-label="Augmenter la quantité">+</button>
-                        </div>
-                        <div class="price-container pack-price-container">
-                            <span class="original-price-detail"><%= pack.originalPrice %> DA</span>
-                            <span id="pack-price" data-base-price="<%= pack.discountedPrice %>"><%= parseFloat(pack.discountedPrice).toFixed(2).replace('.', ',') %> DA</span>
-                        </div>
-                    </div>
-                    
-                    <!-- ================================================== -->
-                    <!--                 START OF CHANGES                 -->
-                    <!-- ================================================== -->
-                    <div class="action-buttons">
-                       <button id="add-to-cart-btn" 
-                                class="btn-product-primary" 
-                                data-product-id="<%= pack._id %>"
-                                data-product-name="<%= pack.name %>"
-                                data-product-price="<%= pack.discountedPrice %>"
-                                data-product-image="<%= primaryImage %>"
-                                data-is-pack="true">
-                            Ajouter au Panier
-                        </button>
-                        <button id="buy-now-btn" 
-                                class="btn-product-secondary"
-                                data-item-id="<%= pack._id %>"
-                                data-item-name="<%= pack.name %>"
-                                data-item-price="<%= pack.discountedPrice %>"
-                                data-item-image="<%= primaryImage %>"
-                                data-is-pack="true">
-                            Acheter Maintenant
-                        </button>
-                    </div>
-                    <!-- ================================================== -->
-                    <!--                  END OF CHANGES                  -->
-                    <!-- ================================================== -->
+                    <!-- Gallery thumbnails -->
+                    <% if (pack.gallery && pack.gallery.length > 0) { %>
+                        <% pack.gallery.forEach((galleryImage, index) => { %>
+                            <% const imageUrl = getImageUrl(galleryImage); %>
+                            <img src="<%= imageUrl %>" 
+                                 alt="Thumbnail <%= index + 2 %> for <%= pack.name %>" 
+                                 class="thumbnail-image" 
+                                 data-src="<%= imageUrl %>">
+                        <% }) %>
+                    <% } %>
                 </div>
             </div>
-        </section>
+            <div class="product-purchase-panel">
+                <h1 id="pack-name"><%= pack.name %></h1>
+                <p id="pack-contents"><%= pack.contents %></p>
 
-        <section class="product-info-tabs">
-            <div class="tab-nav">
-                <button class="tab-link active" data-tab="description">Description</button>
-            </div>
-            <div class="tab-content-container">
-                <div id="tab-description" class="tab-panel active">
-                    <p><%= pack.description %></p>
+                <div class="quantity-section">
+                    <div class="quantity-selector">
+                        <button id="quantity-minus" class="quantity-btn" aria-label="Réduire la quantité">-</button>
+                        <span id="quantity-display" class="quantity-value">1</span>
+                        <button id="quantity-plus" class="quantity-btn" aria-label="Augmenter la quantité">+</button>
+                    </div>
+                    <div class="price-container pack-price-container">
+                        <span class="original-price-detail"><%= pack.originalPrice %> DA</span>
+                        <span id="pack-price" data-base-price="<%= pack.discountedPrice %>"><%= parseFloat(pack.discountedPrice).toFixed(2).replace('.', ',') %> DA</span>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                   <button id="add-to-cart-btn" 
+                            class="btn-product-primary" 
+                            data-product-id="<%= pack._id %>"
+                            data-product-name="<%= pack.name %>"
+                            data-product-price="<%= pack.discountedPrice %>"
+                            data-product-image="<%= primaryImage %>"
+                            data-is-pack="true">
+                        Ajouter au Panier
+                    </button>
+                    <button id="buy-now-btn" 
+                            class="btn-product-secondary"
+                            data-item-id="<%= pack._id %>"
+                            data-item-name="<%= pack.name %>"
+                            data-item-price="<%= pack.discountedPrice %>"
+                            data-item-image="<%= primaryImage %>"
+                            data-is-pack="true">
+                        Acheter Maintenant
+                    </button>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+
+    <section class="product-info-tabs">
+        <div class="tab-nav">
+            <button class="tab-link active" data-tab="description">Description</button>
+        </div>
+        <div class="tab-content-container">
+            <div id="tab-description" class="tab-panel active">
+                <p><%= pack.description %></p>
+            </div>
+        </div>
+    </section>
+</main>
 
     <%- include('partials/footer') %>
     <%- include('partials/modals') %>  

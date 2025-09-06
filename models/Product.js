@@ -48,20 +48,29 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    // ==================================================
+ // ==================================================
     //                 START OF CHANGES
     // ==================================================
     mainImage: {
-        type: String,
-        required: true // The main image is now mandatory
+        url: { type: String, required: true },
+        public_id: { type: String, required: true }
     },
-    gallery: [String], // An array of strings for additional images
+    gallery: [
+        {
+            url: { type: String, required: true },
+            public_id: { type: String, required: true }
+        }
+    ],
     // ==================================================
     //                  END OF CHANGES
     // ==================================================
     ingredients: [String],
     how_to_use: [String],
     reviews: [reviewSchema]
+});
+
+productSchema.virtual('mainImageUrl').get(function() {
+    return this.mainImage ? this.mainImage.url : '/images/placeholder.jpg';
 });
 
 module.exports = mongoose.model('Product', productSchema);
